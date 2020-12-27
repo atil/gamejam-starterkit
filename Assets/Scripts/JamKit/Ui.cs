@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Ui : MonoBehaviour
 {
     [SerializeField]
-    private Image _flashImage;
+    private Image _flashImage = default;
 
     [SerializeField]
-    private FlashInfo _startFlashInfo;
+    private FlashInfo _startFlashInfo = default;
 
     public void StartFlash()
     {

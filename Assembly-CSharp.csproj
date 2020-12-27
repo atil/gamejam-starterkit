@@ -63,17 +63,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\AimController.cs" />
-    <Compile Include="Assets\Scripts\CoroutineStarter.cs" />
-    <Compile Include="Assets\Scripts\Curve.cs" />
-    <Compile Include="Assets\Scripts\Drawing.cs" />
-    <Compile Include="Assets\Scripts\Gravity.cs" />
-    <Compile Include="Assets\Scripts\MouseLook.cs" />
-    <Compile Include="Assets\Scripts\Player.cs" />
-    <Compile Include="Assets\Scripts\PlayerMotor.cs" />
-    <Compile Include="Assets\Scripts\Sfx.cs" />
-    <Compile Include="Assets\Scripts\Ui.cs" />
-    <Compile Include="Assets\Scripts\Util.cs" />
+    <Compile Include="Assets\Scripts\JamKit\AimController.cs" />
+    <Compile Include="Assets\Scripts\JamKit\CoroutineStarter.cs" />
+    <Compile Include="Assets\Scripts\JamKit\Curve.cs" />
+    <Compile Include="Assets\Scripts\JamKit\Drawing.cs" />
+    <Compile Include="Assets\Scripts\JamKit\Footsteps.cs" />
+    <Compile Include="Assets\Scripts\JamKit\Gravity.cs" />
+    <Compile Include="Assets\Scripts\JamKit\MouseLook.cs" />
+    <Compile Include="Assets\Scripts\JamKit\Player.cs" />
+    <Compile Include="Assets\Scripts\JamKit\PlayerMotor.cs" />
+    <Compile Include="Assets\Scripts\JamKit\Sfx.cs" />
+    <Compile Include="Assets\Scripts\JamKit\Trigger\PrintTrigger.cs" />
+    <Compile Include="Assets\Scripts\JamKit\Trigger\TriggerBase.cs" />
+    <Compile Include="Assets\Scripts\JamKit\Ui.cs" />
+    <Compile Include="Assets\Scripts\JamKit\Util.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.14f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>

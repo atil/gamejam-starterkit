@@ -35,4 +35,24 @@ public class Curve : ScriptableObject
         }
         postAction();
     }
+
+    public static void TweenRepeating(AnimationCurve curve, float duration, Action<float> perTickAction)
+    {
+        CoroutineStarter.Run(TweenRepeatingCoroutine(curve, duration, perTickAction));
+    }
+
+    private static IEnumerator TweenRepeatingCoroutine(AnimationCurve curve, float duration, Action<float> perTickAction)
+    {
+        for (float f = 0f; ; f += Time.deltaTime)
+        {
+            perTickAction(curve.Evaluate(f / duration));
+            if (f >= duration)
+            {
+                f = 0;
+            }
+            yield return null;
+        }
+
+        
+    }
 }

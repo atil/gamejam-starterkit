@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using UnityEditorInternal;
 
 public static class EditorUtils
 {
@@ -16,5 +17,11 @@ public static class EditorUtils
     {
         AssetDatabase.Refresh();
         EditorApplication.isPlaying = true;
+    }
+
+    [MenuItem("GameJam/Toggle profile &k", false, 10)]
+    private static void ToggleProfile()
+    {
+        ProfilerDriver.enabled = !ProfilerDriver.enabled;
     }
 }

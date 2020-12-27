@@ -3,18 +3,39 @@ using UnityEngine;
 
 public class MouseLook : MonoBehaviour
 {
-    public Camera MainCamera;
-    public Camera WeaponCamera;
-    public AnimationCurve FovKickCurve;
-    public bool IsInverted = false;
+    [SerializeField]
+    private Camera _mainCamera = default;
 
-    private const int SensitivityMax = 300;
-    private const int SensitivityMin = 50;
+    [SerializeField]
+    private Camera _weaponCamera = default;
 
-    private const int FovMax = 110;
-    private const int FovMin = 60;
+    [SerializeField]
+    private AnimationCurve _fovKickCurve = default;
 
+    [Header("Config")]
+
+    [SerializeField]
+    private bool _isInverted = false;
+
+    [SerializeField]
+    private bool _zoomEnabled = true;
+
+    [SerializeField]
+    private int _sensitivityMax = 300;
+
+    [SerializeField]
+    private int _sensitivityMin = 50;
+
+    [SerializeField]
+    private int _fovMax = 110;
+
+    [SerializeField]
+    private int _fovMin = 60;
+
+    [SerializeField]
     private float _sensitivity = 150;
+
+    [SerializeField]
     private float _zoomSensitivity = 30;
 
     private float _fov = 60;
@@ -26,13 +47,13 @@ public class MouseLook : MonoBehaviour
 
     public void OnSensitivityChanged(float normalizedValue)
     {
-        _sensitivity = Mathf.Lerp(SensitivityMin, SensitivityMax, normalizedValue);
+        _sensitivity = Mathf.Lerp(_sensitivityMin, _sensitivityMax, normalizedValue);
         _zoomSensitivity = _sensitivity / 5f;
     }
 
     public void OnFovChanged(float normalizedValue)
     {
-        _fov = Mathf.Lerp(FovMin, FovMax, normalizedValue);
+        _fov = Mathf.Lerp(_fovMin, _fovMax, normalizedValue);
     }
 
     public void Tick(float dt)
@@ -40,22 +61,25 @@ public class MouseLook : MonoBehaviour
         var t = Mathf.Lerp(0f, 1f, (_currentFov - ZoomFov) / (_fov - ZoomFov));
         var sensitivity = Mathf.Lerp(_zoomSensitivity, _sensitivity, t);
 
-        _pitch += Input.GetAxis("Mouse Y") * sensitivity * dt * (IsInverted ? 1 : -1);
+        _pitch += Input.GetAxis("Mouse Y") * sensitivity * dt * (_isInverted ? 1 : -1);
         _pitch = Mathf.Clamp(_pitch, -89, 89);
 
-        MainCamera.transform.localRotation = Quaternion.Euler(Vector3.right * _pitch);
+        _mainCamera.transform.localRotation = Quaternion.Euler(Vector3.right * _pitch);
         transform.rotation *= Quaternion.Euler(Input.GetAxis("Mouse X") * sensitivity * dt * Vector3.up);
 
-        MainCamera.fieldOfView = Mathf.Lerp(MainCamera.fieldOfView, _currentFov, ZoomSpeed * dt);
-        WeaponCamera.fieldOfView = Mathf.Lerp(WeaponCamera.fieldOfView, _currentFov, ZoomSpeed * dt);
+        _mainCamera.fieldOfView = Mathf.Lerp(_mainCamera.fieldOfView, _currentFov, ZoomSpeed * dt);
+        _weaponCamera.fieldOfView = Mathf.Lerp(_weaponCamera.fieldOfView, _currentFov, ZoomSpeed * dt);
 
-        if (Input.GetKey(KeyCode.LeftAlt))
+        if (_zoomEnabled)
         {
-            _currentFov = ZoomFov;
-        }
-        else
-        {
-            _currentFov = _fov;
+            if (Input.GetKey(KeyCode.LeftAlt))
+            {
+                _currentFov = ZoomFov;
+            }
+            else
+            {
+                _currentFov = _fov;
+            }
         }
     }
 
@@ -90,8 +114,8 @@ public class MouseLook : MonoBehaviour
 
     public void FovKick(float duration, float targetFovCoeff)
     {
-        StartCoroutine(FovKickCoroutine(MainCamera, duration, targetFovCoeff));
-        StartCoroutine(FovKickCoroutine(WeaponCamera, duration, targetFovCoeff));
+        StartCoroutine(FovKickCoroutine(_mainCamera, duration, targetFovCoeff));
+        StartCoroutine(FovKickCoroutine(_weaponCamera, duration, targetFovCoeff));
     }
 
     private IEnumerator FovKickCoroutine(Camera cam, float duration, float targetFovCoeff)
@@ -101,7 +125,7 @@ public class MouseLook : MonoBehaviour
 
         for (float f = 0; f < duration; f += Time.deltaTime)
         {
-            cam.fieldOfView = Mathf.Lerp(baseFov, targetFov, FovKickCurve.Evaluate(f / duration));
+            cam.fieldOfView = Mathf.Lerp(baseFov, targetFov, _fovKickCurve.Evaluate(f / duration));
             yield return null;
         }
 

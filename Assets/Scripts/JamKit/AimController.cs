@@ -5,25 +5,25 @@ using UnityEngine;
 public class AimController : MonoBehaviour
 {
     [SerializeField]
-    private float _aimDistance;
+    private float _aimDistance = default;
 
     [SerializeField]
-    private LayerMask _aimLayer;
+    private LayerMask _aimLayer = default;
 
     [SerializeField]
-    private Camera _aimCamera;
+    private Camera _aimCamera = default;
     
     [SerializeField]
-    private RectTransform _imageTopLeft;
+    private RectTransform _imageTopLeft = default;
 
     [SerializeField]
-    private RectTransform _imageTopRight;
+    private RectTransform _imageTopRight = default;
 
     [SerializeField]
-    private RectTransform _imageBottomLeft;
+    private RectTransform _imageBottomLeft = default;
 
     [SerializeField]
-    private RectTransform _imageBottomRight;
+    private RectTransform _imageBottomRight = default;
 
     private Transform _aimedTransform;
     private readonly List<Vector3> _aimedMeshVertices = new List<Vector3>();
@@ -57,7 +57,7 @@ public class AimController : MonoBehaviour
                     continue;
                 }
 
-                if (hit.transform.TryGetComponent(out MeshFilter meshFilter))
+                if (!hit.transform.TryGetComponent(out MeshFilter meshFilter))
                 {
                     Debug.LogError("Aimed object doesn't have a mesh filter, even though it's layer is set as aimable");
                     continue;

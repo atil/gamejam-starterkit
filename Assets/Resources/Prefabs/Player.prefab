@@ -664,6 +664,7 @@ GameObject:
   - component: {fileID: 114208322334675950}
   - component: {fileID: 934332910}
   - component: {fileID: 934332911}
+  - component: {fileID: 8100539221291569078}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -712,6 +713,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 7936
   _sfx: {fileID: 114722541770350444}
+  _footsteps: {fileID: 8100539221291569078}
   _debugInfo: 0
   _groundedRayPositions:
   - {fileID: 4148928816489578}
@@ -719,6 +721,20 @@ MonoBehaviour:
   - {fileID: 4929584968289400}
   - {fileID: 4214202988093086}
   - {fileID: 4908774125912330}
+  _radius: 2
+  _groundAccelerationCoeff: 10
+  _airAccelCoeff: 1
+  _airDecelCoeff: 1.5
+  _maxSpeedAlongOneDimension: 8
+  _walkSpeed: 4
+  _friction: 15
+  _frictionSpeedThreshold: 0.5
+  _jumpStrength: 8
+  _gravityAmount: 24
+  _airControlPrecision: 16
+  _airControlAdditionForward: 16
+  _noClipSpeed: 50
+  _jumpEnabled: 1
 --- !u!114 &114722541770350444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -734,17 +750,16 @@ MonoBehaviour:
   WalkAudioSource: {fileID: 82223581774592828}
   OtherAudioSource: {fileID: 82731886957757620}
   MusicAudioSource: {fileID: 82729580898922134}
-  JumpClip: {fileID: 8300000, guid: 1353d3955b1ece044b757efd1434b192, type: 3}
-  LandClip: {fileID: 8300000, guid: d1b624bd9b024844d9f53258d3389590, type: 3}
+  JumpClip: {fileID: 8300000, guid: 0f6254b17b1958b4780a8120eee472c3, type: 3}
+  LandClip: {fileID: 8300000, guid: 4db06683d371148439359f66c51bce8e, type: 3}
   LandFromHeightClip: {fileID: 8300000, guid: cb579912ec414aa4788695c1ba620d3a, type: 3}
   EmptyFireClip: {fileID: 8300000, guid: 60c4c85c9e2032f4bb81dddcd7bbdb49, type: 3}
   ClickClip: {fileID: 8300000, guid: 58552358cdbb04b40a230c5919e0218a, type: 3}
   ButtonClip: {fileID: 8300000, guid: 237fa470ef640b94ab5693d9f3a20f6a, type: 3}
   Footsteps:
-  - {fileID: 8300000, guid: fd142021ae56c234da57751bb4d6b11a, type: 3}
-  - {fileID: 8300000, guid: ed920f79346ab6e4fb4ea99592051bc4, type: 3}
-  - {fileID: 8300000, guid: ebed5dcf134f99f44a724e2f0ad1098d, type: 3}
-  - {fileID: 8300000, guid: e258afcf5b6e91647af48866365a4677, type: 3}
+  - {fileID: 8300000, guid: 0b11ec6f83d72134089d902516038e4a, type: 3}
+  - {fileID: 8300000, guid: dd9eca7fb7adae042b062ec9b8b5118a, type: 3}
+  - {fileID: 8300000, guid: 202666c5e880ca143b58fe30a25153a1, type: 3}
 --- !u!82 &82223581774592828
 AudioSource:
   m_ObjectHideFlags: 0
@@ -869,42 +884,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65ea30070c405de43b00ccaf599c12a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MainCamera: {fileID: 20678508594063876}
-  WeaponCamera: {fileID: 20989466240774414}
-  FovKickCurve:
+  _mainCamera: {fileID: 20678508594063876}
+  _weaponCamera: {fileID: 20989466240774414}
+  _fovKickCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
-      value: 0.0048543215
-      inSlope: 21.368937
-      outSlope: 21.368937
-      tangentMode: 0
+      time: -0.01
+      value: 0.012605429
+      inSlope: 9.784991
+      outSlope: 9.784991
+      tangentMode: 34
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.14130434
+      inWeight: 0
+      outWeight: 0.33333334
     - serializedVersion: 3
-      time: 0.09967497
+      time: 0.09090909
       value: 1
-      inSlope: 0
-      outSlope: 0
+      inSlope: 0.06188677
+      outSlope: 0.06188677
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
+      inWeight: 0.6728854
       outWeight: 0.33333334
     - serializedVersion: 3
-      time: 1.01
-      value: 0.0024271607
-      inSlope: -3.5341966
-      outSlope: -3.5341966
+      time: 1
+      value: -0.008402824
+      inSlope: -2.7351618
+      outSlope: -2.7351618
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.04073891
-      outWeight: 0.33333334
+      inWeight: 0.0447792
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  IsInverted: 0
+  _isInverted: 0
+  _zoomEnabled: 1
+  _sensitivityMax: 300
+  _sensitivityMin: 50
+  _fovMax: 110
+  _fovMin: 60
+  _sensitivity: 150
+  _zoomSensitivity: 30
 --- !u!114 &934332910
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -941,3 +963,18 @@ MonoBehaviour:
   _imageTopRight: {fileID: 0}
   _imageBottomLeft: {fileID: 0}
   _imageBottomRight: {fileID: 0}
+--- !u!114 &8100539221291569078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1742898383018988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4aab118c28318e4dbd7c5bb3b498e41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _sfx: {fileID: 114722541770350444}
+  _stepDistance: 2
+  _heavyFallSfxVelocityLimit: 25

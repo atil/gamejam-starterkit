@@ -10,68 +10,89 @@ public class PlayerMotor : MonoBehaviour
 {
     #region Drag Drop
     [SerializeField]
-    private Transform _camTransform;
+    private Transform _camTransform = default;
 
     // Collision resolving is done with respect to this volume
     [SerializeField]
-    private CapsuleCollider _collisionVolume;
+    private CapsuleCollider _collisionVolume = default;
 
     // Collision will not happend with these layers
     // One of them has to be this controller's own layer
     [SerializeField]
-    private LayerMask _excludedLayers;
+    private LayerMask _excludedLayers = default;
 
     [SerializeField]
-    private Sfx _sfx;
+    private Sfx _sfx = default;
 
     [SerializeField]
-    private bool _debugInfo;
+    private Footsteps _footsteps = default;
 
     [SerializeField]
-    private List<Transform> _groundedRayPositions;
+    private bool _debugInfo = false;
+
+    [SerializeField]
+    private List<Transform> _groundedRayPositions = default;
     #endregion
 
-    #region Movement Parameters
+    #region Configuration
+
+    [Header("Config")]
 
     // The controller can collide with colliders within this radius
-    private const float Radius = 2f;
+    [SerializeField]
+    private float _radius = 2f;
 
     // Ad-hoc approach to make the controller accelerate faster
-    private const float GroundAccelerationCoeff = 10.0f;
+    [SerializeField]
+    private float _groundAccelerationCoeff = 10.0f;
 
     // How fast the controller accelerates while it's not grounded
-    private const float AirAccelCoeff = 1f;
+    [SerializeField]
+    private float _airAccelCoeff = 1f;
 
     // Air deceleration occurs when the player gives an input that's not aligned with the current velocity
-    private const float AirDecelCoeff = 1.5f;
+    [SerializeField]
+    private float _airDecelCoeff = 1.5f;
 
     // Along a dimension, we can't go faster than this
     // This dimension is relative to the controller, not global
     // Meaning that "max speend along X" means "max speed along 'right side' of the controller"
-    private const float MaxSpeedAlongOneDimension = 8f;
+    [SerializeField]
+    private float _maxSpeedAlongOneDimension = 8f;
 
     // When pressing to shift
-    private const float WalkSpeed = 4f;
+    [SerializeField]
+    private float _walkSpeed = 4f;
 
     // How fast the controller decelerates on the grounded
-    private const float Friction = 15;
+    [SerializeField]
+    private float _friction = 15;
 
     // Stop if under this speed
-    private const float FrictionSpeedThreshold = 0.5f;
+    [SerializeField]
+    private float _frictionSpeedThreshold = 0.5f;
 
     // Push force given when jumping
-    private const float JumpStrength = 8f;
+    [SerializeField]
+    private float _jumpStrength = 8f;
 
     // yeah...
-    private const float GravityAmount = 24f;
+    [SerializeField]
+    private float _gravityAmount = 24f;
 
     // How precise the controller can change direction while not grounded 
-    private const float AirControlPrecision = 16f;
+    [SerializeField]
+    private float _airControlPrecision = 16f;
 
     // When moving only forward, increase air control dramatically
-    private const float AirControlAdditionForward = 16f;
+    [SerializeField]
+    private float _airControlAdditionForward = 16f;
 
-    private const float NoClipSpeed = 50f;
+    [SerializeField]
+    private float _noClipSpeed = 50f;
+
+    [SerializeField]
+    private bool _jumpEnabled = true;
     #endregion
 
     #region Fields
@@ -87,14 +108,11 @@ public class PlayerMotor : MonoBehaviour
     private Transform _ghostJumpRayPosition;
 
     // Some information to persist
-    private bool _isGroundedInPrevFrame; 
-    private bool _isGonnaJump; 
+    private bool _isGroundedInPrevFrame = false; 
+    private bool _isGonnaJump = false;
     private Vector3 _wishDirDebug;
 
-    private bool _noClipMove;
-
-    private float _footstepDistance;
-    private Vector3 _prevVelocity;
+    private bool _noClipMove = false;
     #endregion
 
     private void Start()
@@ -165,7 +183,7 @@ public class PlayerMotor : MonoBehaviour
                 y = -1;
             }
             moveInput.y = y;
-            transform.position += _camTransform.TransformDirection(moveInput) * NoClipSpeed * Time.deltaTime;
+            transform.position += _camTransform.TransformDirection(moveInput) * _noClipSpeed * Time.deltaTime;
             _velocity = Vector3.zero;
 
             return;
@@ -174,13 +192,16 @@ public class PlayerMotor : MonoBehaviour
 
         IsWalking = Input.GetKey(KeyCode.LeftShift);
 
-        if (Input.GetKeyDown(KeyCode.Space) && !_isGonnaJump)
+        if (_jumpEnabled)
         {
-            _isGonnaJump = true;
-        }
-        else if (Input.GetKeyUp(KeyCode.Space))
-        {
-            _isGonnaJump = false;
+            if (Input.GetKeyDown(KeyCode.Space) && !_isGonnaJump)
+            {
+                _isGonnaJump = true;
+            }
+            else if (Input.GetKeyUp(KeyCode.Space))
+            {
+                _isGonnaJump = false;
+            }
         }
 
         // MOVEMENT
@@ -195,15 +216,15 @@ public class PlayerMotor : MonoBehaviour
                 ApplyFriction(ref _velocity, dt);
             }
             
-            var speedLimit = IsWalking ? WalkSpeed : MaxSpeedAlongOneDimension;
-            Accelerate(ref _velocity, wishDir, GroundAccelerationCoeff, speedLimit, dt);
+            var speedLimit = IsWalking ? _walkSpeed : _maxSpeedAlongOneDimension;
+            Accelerate(ref _velocity, wishDir, _groundAccelerationCoeff, speedLimit, dt);
 
             // Crop up horizontal velocity component
             _velocity = Vector3.ProjectOnPlane(_velocity, groundNormal);
             if (_isGonnaJump)
             {
                 // Jump away
-                _velocity += Gravity.Up * JumpStrength;
+                _velocity += Gravity.Up * _jumpStrength;
                 _sfx.Jump();
             }
         }
@@ -211,16 +232,16 @@ public class PlayerMotor : MonoBehaviour
         {
             // If the input doesn't have the same facing with the current velocity
             // then slow down instead of speeding up
-            var coeff = Vector3.Dot(_velocity, wishDir) > 0 ? AirAccelCoeff : AirDecelCoeff;
+            var coeff = Vector3.Dot(_velocity, wishDir) > 0 ? _airAccelCoeff : _airDecelCoeff;
 
-            Accelerate(ref _velocity, wishDir, coeff, MaxSpeedAlongOneDimension, dt);
+            Accelerate(ref _velocity, wishDir, coeff, _maxSpeedAlongOneDimension, dt);
 
             if (Mathf.Abs(moveInput.z) > 0.0001) // Pure side velocity doesn't allow air control
             {
                 ApplyAirControl(ref _velocity, wishDir, moveInput, dt);
             }
 
-            _velocity += Gravity.Down * (GravityAmount * dt);
+            _velocity += Gravity.Down * (_gravityAmount * dt);
         }
 
         var displacement = _velocity * dt;
@@ -237,32 +258,9 @@ public class PlayerMotor : MonoBehaviour
 
         transform.position += collisionDisplacement;
 
-        #region Footsteps
-        if (isGrounded)
-        {
-            // At the moment of stopping:
-            // - force play the sfx, it makes it sound more natural, humans usually stop with an extra step
-            // - reset the distance, to make the footsteps ryhtym the same at start of walking every time
-            if (_prevVelocity.ToHorizontal().magnitude > 0.01 && _velocity.ToHorizontal().magnitude < 0.01)
-            {
-                _footstepDistance = 0f;
-                _sfx.Footstep();
-            }
-
-            var totalDisplacement = displacement + collisionDisplacement;
-            _footstepDistance += totalDisplacement.magnitude;
-            
-            const float stepDistance = 2f; // Play a footstep after this much of travel
-            if (_footstepDistance > stepDistance)
-            {
-                _footstepDistance = 0f;
-                _sfx.Footstep();
-            }
-        }
-        #endregion
+        _footsteps.Tick(isGrounded, _velocity, (displacement + collisionDisplacement).magnitude);
         
         _isGroundedInPrevFrame = isGrounded;
-        _prevVelocity = _velocity;
     }
 
     private void Accelerate(ref Vector3 playerVelocity, Vector3 accelDir, float accelCoeff, float speedLimit, float dt)
@@ -280,7 +278,7 @@ public class PlayerMotor : MonoBehaviour
         // How much we are gonna increase our speed
         // maxSpeed * dt => the real deal. a = v / t
         // accelCoeff => ad hoc approach to make it feel better
-        var accelAmount = accelCoeff * MaxSpeedAlongOneDimension * dt;
+        var accelAmount = accelCoeff * _maxSpeedAlongOneDimension * dt;
 
         // If we are accelerating more than in a way that we exceed maxSpeedInOneDimension, crop it to max
         if (accelAmount > addSpeed)
@@ -299,8 +297,8 @@ public class PlayerMotor : MonoBehaviour
             return;
         }
 
-        var downLimit = Mathf.Max(speed, FrictionSpeedThreshold); // Don't drop below treshold
-        var dropAmount = speed - (downLimit * Friction * dt);
+        var downLimit = Mathf.Max(speed, _frictionSpeedThreshold); // Don't drop below treshold
+        var dropAmount = speed - (downLimit * _friction * dt);
         if (dropAmount < 0)
         {
             dropAmount = 0;
@@ -319,14 +317,14 @@ public class PlayerMotor : MonoBehaviour
         var dot = Vector3.Dot(playerDirHorz, accelDir);
         if (dot > 0)
         {
-            var k = AirControlPrecision * dot * dot * dt;
+            var k = _airControlPrecision * dot * dot * dt;
 
             // CPMA thingy:
             // If we want pure forward movement, we have much more air control
             var isPureForward = Mathf.Abs(moveInput.x) < 0.0001 && Mathf.Abs(moveInput.z) > 0;
             if (isPureForward)
             {
-                k *= AirControlAdditionForward;
+                k *= _airControlAdditionForward;
             }
 
             // A little bit closer to accelDir
@@ -343,13 +341,22 @@ public class PlayerMotor : MonoBehaviour
     private Vector3 ResolveCollisions(ref Vector3 playerVelocity)
     {
         // Get nearby colliders
-        Physics.OverlapSphereNonAlloc(transform.position, Radius + 0.1f,
+        Physics.OverlapSphereNonAlloc(transform.position, _radius + 0.1f,
             _overlappingColliders, ~_excludedLayers);
 
+        // NOTE: Total displacement and total penetration are two different things:
+        // Penetration is the result of the physics calculation
+        // For displacement, we ignore very small penetration results, to make the collision resolving less shaky
+        // But land SFX logic needs the uncropped values, because:
+        // There are cases where the motor is grounded (due to the raycast check) but doesn't have 
+        // vertical penetration resolving, due to the cropping above
+        // Therefore SFX logic thinks there's no penetration even when it's grounded
         var totalDisplacement = Vector3.zero;
+        var totalPenetration = Vector3.zero;
+
         var checkedColliderIndices = new HashSet<int>();
 
-        Vector3 velocityBeforeCrop = playerVelocity;
+        Vector3 velocityBeforeResolve = playerVelocity;
         
         // If the player is intersecting with that environment collider, separate them
         for (var i = 0; i < _overlappingColliders.Length; i++)
@@ -368,17 +375,18 @@ public class PlayerMotor : MonoBehaviour
                 continue;
             }
 
-            Vector3 collisionNormal;
-            float collisionDistance;
             if (Physics.ComputePenetration(
                 _collisionVolume, _collisionVolume.transform.position, _collisionVolume.transform.rotation,
                 envColl, envColl.transform.position, envColl.transform.rotation,
-                out collisionNormal, out collisionDistance))
+                out Vector3 penetrationNormal, out float penetrationDistance))
             {
+                totalPenetration += penetrationNormal * penetrationDistance;
+
                 // Ignore very small penetrations
                 // Required for standing still on slopes
                 // ... still far from perfect though
-                if (collisionDistance < 0.015)
+                const float ignoredPenetrationDistanceThreshold = 0.015f;
+                if (penetrationDistance < ignoredPenetrationDistanceThreshold)
                 {
                     continue;
                 }
@@ -386,11 +394,10 @@ public class PlayerMotor : MonoBehaviour
                 checkedColliderIndices.Add(i);
 
                 // Get outta that collider!
-                totalDisplacement += collisionNormal * collisionDistance;
-
+                totalDisplacement += penetrationNormal * penetrationDistance;
 
                 // Crop down the velocity component which is in the direction of penetration
-                playerVelocity -= Vector3.Project(playerVelocity, collisionNormal);
+                playerVelocity -= Vector3.Project(playerVelocity, penetrationNormal);
             }
         }
 
@@ -400,22 +407,7 @@ public class PlayerMotor : MonoBehaviour
             _overlappingColliders[i] = null;
         }
 
-        // Landing fx
-        if (totalDisplacement.magnitude > 0.0001 // There is some displacement
-            && Vector3.Dot(totalDisplacement.normalized, Gravity.Down) < -0.9f) // That displacement is against gravity
-        {
-            float verticalVelocity = Vector3.Dot(velocityBeforeCrop, Gravity.Down);
-            const float differentSfxVelocityLimit = 25f;
-
-            if (verticalVelocity > differentSfxVelocityLimit)
-            {
-                _sfx.LandFromHeight();
-            }
-            else
-            {
-                _sfx.Land();
-            }
-        }
+        _footsteps.HandleLandSfx(totalPenetration, velocityBeforeResolve);
 
         return totalDisplacement;
     }
