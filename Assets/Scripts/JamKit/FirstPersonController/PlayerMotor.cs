@@ -413,7 +413,7 @@ public class PlayerMotor : MonoBehaviour
     }
 
     // If one of the rays hit, we're considered to be grounded
-    public bool IsGrounded(out Vector3 groundNormal)
+    private bool IsGrounded(out Vector3 groundNormal)
     {
         groundNormal = Gravity.Up;
 

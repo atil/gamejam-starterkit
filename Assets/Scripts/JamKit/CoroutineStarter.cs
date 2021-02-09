@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class CoroutineStarter : MonoBehaviour
 {
-    private static CoroutineStarter _slave;
+    private static readonly CoroutineStarter _slave;
+    
     static CoroutineStarter()
     {
         _slave = new GameObject("CoroutineStarter").AddComponent<CoroutineStarter>();

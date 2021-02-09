@@ -2,6 +2,26 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+[Serializable]
+public class FlashInfo
+{
+    [SerializeField]
+    private Color _startColor = default;
+    public Color StartColor => _startColor;
+
+    [SerializeField]
+    private Color _endColor = default;
+    public Color EndColor => _endColor;
+
+    [SerializeField]
+    private float _duration = default;
+    public float Duration => _duration;
+
+    [SerializeField]
+    private AnimationCurve _curve = default;
+    public AnimationCurve Curve => _curve;
+}
+
 public class Ui : MonoBehaviour
 {
     [SerializeField]
@@ -23,13 +43,4 @@ public class Ui : MonoBehaviour
             });
     }
 
-}
-
-[Serializable]
-public class FlashInfo
-{
-    public Color StartColor;
-    public Color EndColor;
-    public float Duration;
-    public AnimationCurve Curve;
 }
