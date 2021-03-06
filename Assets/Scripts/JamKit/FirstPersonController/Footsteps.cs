@@ -3,9 +3,6 @@ using System.Collections;
 
 public class Footsteps : MonoBehaviour
 {
-    [SerializeField]
-    private Sfx _sfx = default;
-
     [SerializeField] // Play a footstep after this much of travel
     private float _stepDistance = 2f;
 
@@ -29,7 +26,7 @@ public class Footsteps : MonoBehaviour
         if (_prevVelocity.ToHorizontal().magnitude > 0.01 && velocity.ToHorizontal().magnitude < 0.01)
         {
             _footstepDistance = 0f;
-            _sfx.Footstep();
+            Sfx.Instance.Footstep();
         }
 
         _footstepDistance += travelThisFrame;
@@ -37,7 +34,7 @@ public class Footsteps : MonoBehaviour
         if (_footstepDistance > _stepDistance)
         {
             _footstepDistance = 0f;
-            _sfx.Footstep();
+            Sfx.Instance.Footstep();
         }
 
         _prevVelocity = velocity;
@@ -55,11 +52,11 @@ public class Footsteps : MonoBehaviour
 
         if (verticalVelocity > _heavyFallSfxVelocityLimit)
         {
-            _sfx.LandFromHeight();
+            Sfx.Instance.LandFromHeight();
         }
         else
         {
-            _sfx.Land();
+            Sfx.Instance.Land();
         }
 
     }

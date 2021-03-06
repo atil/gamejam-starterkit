@@ -1,14 +1,10 @@
-﻿#define AUDIO_ENABLED
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Sfx : MonoBehaviour
+public class Sfx : SingletonBehaviour<Sfx>
 {
     [SerializeField]
-    private AudioSource _walkAudioSource;
-    [SerializeField]
-    private AudioSource _otherAudioSource;
+    private AudioSource _commonAudioSource;
     [SerializeField]
     private AudioSource _musicAudioSource;
 
@@ -26,47 +22,52 @@ public class Sfx : MonoBehaviour
     [SerializeField]
     private List<AudioClip> _footsteps;
 
+    private float _musicVolume;
+
     private void Start()
     {
-#if !AUDIO_ENABLED
-        _musicAudioSource.volume = 0;
-#endif
+        _musicVolume = _musicAudioSource.volume;
     }
 
-    public void OnMusicVolumeChanged(float normalizedValue)
+    public void ChangeMusicTrack(AudioClip musicClip)
     {
-        _musicAudioSource.volume = normalizedValue;
+        _musicAudioSource.clip = musicClip;
+        _musicAudioSource.volume = _musicVolume;
     }
 
-    public void OnSfxVolumeChanged(float normalizedValue)
+    public void FadeOutMusic(float duration)
     {
-        _otherAudioSource.volume = normalizedValue;
+        AnimationCurve linearCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
+        Curve.Tween(linearCurve,
+            duration,
+            t =>
+            {
+                _musicAudioSource.volume = Mathf.Lerp(_musicVolume, 0f, t);
+            },
+            () =>
+            {
+                _musicAudioSource.volume = 0f;
+            });
     }
 
     public void Jump()
     {
-#if !AUDIO_ENABLED
-        return;
-#endif
-        _otherAudioSource.PlayOneShot(_jumpClip);
+        _commonAudioSource.PlayOneShot(_jumpClip);
     }
 
     public void Land()
     {
-        _otherAudioSource.PlayOneShot(_landClip);
+        _commonAudioSource.PlayOneShot(_landClip);
     }
 
     public void LandFromHeight()
     {
-        _otherAudioSource.PlayOneShot(_landFromHeightClip);
+        _commonAudioSource.PlayOneShot(_landFromHeightClip);
     }
 
     public void Footstep()
     {
-#if !AUDIO_ENABLED
-        return;
-#endif
-        _walkAudioSource.PlayOneShot(_footsteps[0]);
+        _commonAudioSource.PlayOneShot(_footsteps[0]);
 
         AudioClip playedSound = _footsteps[0];
 
@@ -77,7 +78,7 @@ public class Sfx : MonoBehaviour
 
     public void Button()
     {
-        _otherAudioSource.PlayOneShot(_buttonClip);
+        _commonAudioSource.PlayOneShot(_buttonClip);
     }
 }
 

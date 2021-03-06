@@ -532,7 +532,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 4ba2614168e409244ad58ec19bed9c7d, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -658,7 +658,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4654546630272882}
   - component: {fileID: 114881486190697618}
-  - component: {fileID: 114722541770350444}
   - component: {fileID: 82223581774592828}
   - component: {fileID: 54719188396779398}
   - component: {fileID: 114208322334675950}
@@ -712,7 +711,7 @@ MonoBehaviour:
   _excludedLayers:
     serializedVersion: 2
     m_Bits: 7936
-  _sfx: {fileID: 114722541770350444}
+  _sfx: {fileID: 0}
   _footsteps: {fileID: 8100539221291569078}
   _debugInfo: 0
   _groundedRayPositions:
@@ -735,31 +734,6 @@ MonoBehaviour:
   _airControlAdditionForward: 16
   _noClipSpeed: 50
   _jumpEnabled: 1
---- !u!114 &114722541770350444
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1742898383018988}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: edad7c4d927c87d41b0caa70339f40cc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  WalkAudioSource: {fileID: 82223581774592828}
-  OtherAudioSource: {fileID: 82731886957757620}
-  MusicAudioSource: {fileID: 82729580898922134}
-  JumpClip: {fileID: 8300000, guid: 0f6254b17b1958b4780a8120eee472c3, type: 3}
-  LandClip: {fileID: 8300000, guid: 4db06683d371148439359f66c51bce8e, type: 3}
-  LandFromHeightClip: {fileID: 8300000, guid: cb579912ec414aa4788695c1ba620d3a, type: 3}
-  EmptyFireClip: {fileID: 8300000, guid: 60c4c85c9e2032f4bb81dddcd7bbdb49, type: 3}
-  ClickClip: {fileID: 8300000, guid: 58552358cdbb04b40a230c5919e0218a, type: 3}
-  ButtonClip: {fileID: 8300000, guid: 237fa470ef640b94ab5693d9f3a20f6a, type: 3}
-  Footsteps:
-  - {fileID: 8300000, guid: 0b11ec6f83d72134089d902516038e4a, type: 3}
-  - {fileID: 8300000, guid: dd9eca7fb7adae042b062ec9b8b5118a, type: 3}
-  - {fileID: 8300000, guid: 202666c5e880ca143b58fe30a25153a1, type: 3}
 --- !u!82 &82223581774592828
 AudioSource:
   m_ObjectHideFlags: 0
@@ -975,6 +949,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4aab118c28318e4dbd7c5bb3b498e41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sfx: {fileID: 114722541770350444}
+  _sfx: {fileID: 0}
   _stepDistance: 2
   _heavyFallSfxVelocityLimit: 25

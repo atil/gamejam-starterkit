@@ -22,9 +22,6 @@ public class PlayerMotor : MonoBehaviour
     private LayerMask _excludedLayers = default;
 
     [SerializeField]
-    private Sfx _sfx = default;
-
-    [SerializeField]
     private Footsteps _footsteps = default;
 
     [SerializeField]
@@ -225,7 +222,7 @@ public class PlayerMotor : MonoBehaviour
             {
                 // Jump away
                 _velocity += Gravity.Up * _jumpStrength;
-                _sfx.Jump();
+                Sfx.Instance.Jump();
             }
         }
         else // Air move
