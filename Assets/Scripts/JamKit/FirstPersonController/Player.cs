@@ -1,31 +1,24 @@
 ﻿using UnityEngine;
 
-public class Player : MonoBehaviour
+namespace JamKit
 {
-    [SerializeField]
-    private Ui _ui = default;
-
-    [SerializeField]
-    private PlayerMotor _playerMotor = default;
-
-    [SerializeField]
-    private MouseLook _mouseLook = default;
-
-    private void Start()
+    public class Player : MonoBehaviour
     {
-        _ui.StartFlash();
-    }
+        [SerializeField] private PlayerMotor _playerMotor = default;
 
-    private void Update()
-    {
-        float dt = Time.deltaTime;
-        _mouseLook.Tick(dt);
-        _playerMotor.Tick(dt);
-    }
+        [SerializeField] private MouseLook _mouseLook = default;
 
-    public void ResetAt(Transform t)
-    {
-        _mouseLook.ResetAt(t, null);
-        _playerMotor.ResetAt(t);
+        private void Update()
+        {
+            float dt = Time.deltaTime;
+            _mouseLook.Tick(dt);
+            _playerMotor.Tick(dt);
+        }
+
+        public void ResetAt(Transform t)
+        {
+            _mouseLook.ResetAt(t, null);
+            _playerMotor.ResetAt(t);
+        }
     }
 }

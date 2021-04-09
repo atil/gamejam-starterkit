@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PrintTrigger : TriggerBase
+namespace JamKit
 {
-    protected override bool TriggerOnce => false;
-
-    // Example trigger usage
-    protected override void OnTriggered()
+    public class PrintTrigger : TriggerBase
     {
-        Debug.Log("triggered!");
+        protected override bool TriggerOnce => false;
+
+        // Example trigger usage
+        protected override void OnTriggered()
+        {
+            Debug.Log("triggered!");
+        }
     }
 }

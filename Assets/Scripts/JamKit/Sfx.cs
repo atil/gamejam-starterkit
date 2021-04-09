@@ -1,84 +1,85 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 
-public class Sfx : SingletonBehaviour<Sfx>
+namespace JamKit
 {
-    [SerializeField]
-    private AudioSource _commonAudioSource;
-    [SerializeField]
-    private AudioSource _musicAudioSource;
-
-    [Space]
-
-    [SerializeField]
-    private AudioClip _jumpClip;
-    [SerializeField]
-    private AudioClip _landClip;
-    [SerializeField]
-    private AudioClip _landFromHeightClip;
-    [SerializeField]
-    private AudioClip _buttonClip;
-
-    [SerializeField]
-    private List<AudioClip> _footsteps;
-
-    private float _musicVolume;
-
-    private void Start()
+    public class Sfx : SingletonBehaviour<Sfx>
     {
-        _musicVolume = _musicAudioSource.volume;
-    }
+        private AudioSource _commonAudioSource;
+        private AudioSource _musicAudioSource;
 
-    public void ChangeMusicTrack(AudioClip musicClip)
-    {
-        _musicAudioSource.clip = musicClip;
-        _musicAudioSource.volume = _musicVolume;
-    }
+        private const float SfxVolume = 0.5f;
+        private const float MusicVolume = 0.5f;
 
-    public void FadeOutMusic(float duration)
-    {
-        AnimationCurve linearCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
-        Curve.Tween(linearCurve,
-            duration,
-            t =>
+        private SfxDatabase _database;
+        
+        private void Awake()
+        {
+            _commonAudioSource = gameObject.AddComponent<AudioSource>();
+            _commonAudioSource.volume = SfxVolume;
+            _musicAudioSource = gameObject.AddComponent<AudioSource>();
+            _musicAudioSource.volume = SfxVolume;
+            _database = Resources.Load<SfxDatabase>("Sfx/SfxDatabase");
+            if (Camera.main != null)
             {
-                _musicAudioSource.volume = Mathf.Lerp(_musicVolume, 0f, t);
-            },
-            () =>
+                transform.SetParent(Camera.main.transform);
+            }
+        }
+
+        [CanBeNull]
+        private AudioClip GetClip(string clipName)
+        {
+            foreach (AudioClip audioClip in _database.Clips)
             {
-                _musicAudioSource.volume = 0f;
-            });
+                if (audioClip.name == clipName)
+                {
+                    return audioClip;
+                }
+            }
+            Debug.LogError($"Audioclip not found: {clipName}");
+            return null;
+        }
+
+        public void PlayRandom(string clipPrefix)
+        {
+            List<AudioClip> clips = _database.Clips.Where(x => x.name.StartsWith(clipPrefix)).ToList();
+
+            if (clips.Count > 0)
+            {
+                _commonAudioSource.PlayOneShot(clips.GetRandom());
+            }
+            else
+            {
+                Debug.LogError($"Couldn't find any clips with prefix {clipPrefix}");
+            }
+        }
+
+        public void Play(string clipName)
+        {
+            AudioClip clip = GetClip(clipName);
+            if (clip != null)
+            {
+                _commonAudioSource.PlayOneShot(clip);
+            }
+        }
+
+        public void ChangeMusicTrack(string clipName)
+        {
+            _musicAudioSource.clip = GetClip(clipName);
+            _musicAudioSource.volume = MusicVolume;
+        }
+
+        public void FadeOutMusic(float duration)
+        {
+            AnimationCurve linearCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
+            Curve.Tween(linearCurve,
+                duration,
+                t => { _musicAudioSource.volume = Mathf.Lerp(MusicVolume, 0f, t); },
+                () => { _musicAudioSource.volume = 0f; });
+        }
+
     }
 
-    public void Jump()
-    {
-        _commonAudioSource.PlayOneShot(_jumpClip);
-    }
-
-    public void Land()
-    {
-        _commonAudioSource.PlayOneShot(_landClip);
-    }
-
-    public void LandFromHeight()
-    {
-        _commonAudioSource.PlayOneShot(_landFromHeightClip);
-    }
-
-    public void Footstep()
-    {
-        _commonAudioSource.PlayOneShot(_footsteps[0]);
-
-        AudioClip playedSound = _footsteps[0];
-
-        _footsteps.RemoveAt(0);
-        _footsteps.Shuffle();
-        _footsteps.Add(playedSound);
-    }
-
-    public void Button()
-    {
-        _commonAudioSource.PlayOneShot(_buttonClip);
-    }
 }
-

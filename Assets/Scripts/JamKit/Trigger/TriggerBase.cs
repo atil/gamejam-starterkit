@@ -1,28 +1,31 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(BoxCollider))]
-public abstract class TriggerBase : MonoBehaviour
+namespace JamKit
 {
-    protected abstract bool TriggerOnce { get; }
-
-    private bool _isTriggered = false;
-
-    void OnTriggerEnter(Collider collider)
+    [RequireComponent(typeof(BoxCollider))]
+    public abstract class TriggerBase : MonoBehaviour
     {
-        if (TriggerOnce && _isTriggered)
+        protected abstract bool TriggerOnce { get; }
+
+        private bool _isTriggered = false;
+
+        void OnTriggerEnter(Collider collider)
         {
-            return;
+            if (TriggerOnce && _isTriggered)
+            {
+                return;
+            }
+
+            _isTriggered = true;
+            OnTriggered();
         }
 
-        _isTriggered = true;
-        OnTriggered();
-    }
+        protected abstract void OnTriggered();
 
-    protected abstract void OnTriggered();
-
-    public void ResetTrigger()
-    {
-        _isTriggered = false;
+        public void ResetTrigger()
+        {
+            _isTriggered = false;
+        }
     }
 }

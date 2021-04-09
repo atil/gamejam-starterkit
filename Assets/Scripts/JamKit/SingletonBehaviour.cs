@@ -1,27 +1,33 @@
 ﻿using UnityEngine;
 
-public abstract class SingletonBehaviour<T> : MonoBehaviour where T : MonoBehaviour
+namespace JamKit
 {
-    private static T _instance;
-
-    public static T Instance
+    public abstract class SingletonBehaviour<T> : MonoBehaviour where T : MonoBehaviour
     {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = FindObjectOfType<T>();
+        private static T _instance;
 
+        public static T Instance
+        {
+            get
+            {
                 if (_instance == null)
                 {
-                    GameObject go = new GameObject($"Singleton{typeof(T).Name}");
-                    _instance = go.GetComponent<T>();
-                }
-                
-                DontDestroyOnLoad(_instance.gameObject);
-            }
+                    _instance = FindObjectOfType<T>();
 
-            return _instance;
+                    if (_instance == null)
+                    {
+                        GameObject go = new GameObject($"Singleton{typeof(T).Name}");
+                        if (!go.TryGetComponent(out _instance))
+                        {
+                            _instance = go.AddComponent<T>();
+                        }
+                    }
+
+                    DontDestroyOnLoad(_instance.gameObject);
+                }
+
+                return _instance;
+            }
         }
     }
 }

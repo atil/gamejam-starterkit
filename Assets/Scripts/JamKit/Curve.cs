@@ -1,56 +1,62 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Curve")]
-public class Curve : ScriptableObject
+namespace JamKit
 {
-    private static bool _isInited = false;
-    private static Curve _instance;
-    public static Curve Instance
+    [CreateAssetMenu(menuName = "Torreng/Curve")]
+    public class Curve : ScriptableObject
     {
-        get
+        private static bool _isInited = false;
+        private static Curve _instance;
+
+        public static Curve Instance
         {
-            if (!_isInited) // This is way cheaper than null check
+            get
             {
-                _instance = Resources.Load<Curve>("Curves");
-                _isInited = true;
+                if (!_isInited) // This is way cheaper than null check
+                {
+                    _instance = Resources.Load<Curve>("Curves");
+                    _isInited = true;
+                }
+
+                return _instance;
             }
-            return _instance;
         }
-    }
 
-    public static void Tween(AnimationCurve curve, float duration, Action<float> perTickAction, Action postAction)
-    {
-        CoroutineStarter.Run(TweenCoroutine(curve, duration, perTickAction, postAction));
-    }
-
-    private static IEnumerator TweenCoroutine(AnimationCurve curve, float duration, Action<float> perTickAction, Action postAction)
-    {
-        for (float f = 0f; f < duration; f += Time.deltaTime)
+        public static void Tween(AnimationCurve curve, float duration, Action<float> perTickAction, Action postAction)
         {
-            perTickAction(curve.Evaluate(f / duration));
-            yield return null;
+            CoroutineStarter.Run(TweenCoroutine(curve, duration, perTickAction, postAction));
         }
-        postAction();
-    }
 
-    public static void TweenInfinite(AnimationCurve curve, float duration, Action<float> perTickAction)
-    {
-        CoroutineStarter.Run(TweenInfiniteCoroutine(curve, duration, perTickAction));
-    }
-
-    private static IEnumerator TweenInfiniteCoroutine(AnimationCurve curve, float duration, Action<float> perTickAction)
-    {
-        for (float f = 0f; ; f += Time.deltaTime)
+        private static IEnumerator TweenCoroutine(AnimationCurve curve, float duration, Action<float> perTickAction, Action postAction)
         {
-            perTickAction(curve.Evaluate(f / duration));
-            if (f >= duration)
+            for (float f = 0f; f < duration; f += Time.deltaTime)
             {
-                f = 0;
+                perTickAction(curve.Evaluate(f / duration));
+                yield return null;
             }
-            yield return null;
+
+            postAction();
+        }
+
+        public static void TweenInfinite(AnimationCurve curve, float duration, Action<float> perTickAction)
+        {
+            CoroutineStarter.Run(TweenInfiniteCoroutine(curve, duration, perTickAction));
+        }
+
+        private static IEnumerator TweenInfiniteCoroutine(AnimationCurve curve, float duration, Action<float> perTickAction)
+        {
+            for (float f = 0f;; f += Time.deltaTime)
+            {
+                perTickAction(curve.Evaluate(f / duration));
+                if (f >= duration)
+                {
+                    f = 0;
+                }
+
+                yield return null;
+            }
         }
     }
 }
