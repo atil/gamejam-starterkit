@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using System.Diagnostics;
+using System.IO;
+using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
 
@@ -6,7 +9,7 @@ namespace JamKit
 {
     public static class EditorUtils
     {
-        [MenuItem("GameJam/Top View #&q", false, 10)]
+        [MenuItem("Torreng/Top View #&q", false, 10)]
         private static void TopView()
         {
             SceneView s = SceneView.sceneViews[0] as SceneView;
@@ -14,20 +17,47 @@ namespace JamKit
             s.orthographic = true;
         }
 
-        [MenuItem("GameJam/Compile and Play #&p", false, 10)]
+        [MenuItem("Torreng/Compile and Play #&p", false, 10)]
         private static void CompileAndPlay()
         {
             AssetDatabase.Refresh();
             EditorApplication.isPlaying = true;
         }
 
-        [MenuItem("GameJam/Toggle profiler &k", false, 10)]
+        [MenuItem("Torreng/Toggle profiler &k", false, 10)]
         private static void ToggleProfiler()
         {
             ProfilerDriver.enabled = !ProfilerDriver.enabled;
         }
 
-        // Called from the build script
+        [MenuItem("Torreng/Deploy to itch", false, 21)]
+        private static void Deploy()
+        {
+            if (!EditorUtility.DisplayDialog("Deploy button clicked", "Continue with WebGL build and deploy to itch?", "Yes", "Wait no."))
+            {
+                UnityEngine.Debug.Log("Deploy cancelled");
+                return;
+            }
+            
+            const string projectName = "TEST"; // Set this when you open a project in itch
+            
+            BuildWebGL();
+
+            Process zipProcess = Process.Start("7z.exe", "a WebGL.zip ./Build/WebGL/* -r");
+            zipProcess.WaitForExit();
+            UnityEngine.Debug.Log("Zipped build, proceeding with upload");
+            Process butlerProcess = Process.Start("butler.exe", $"push WebGL.zip torrenglabs/{projectName}:win");
+            butlerProcess.WaitForExit();
+            EditorUtility.DisplayDialog("", "Deploy done", "OK good");
+            if (butlerProcess.ExitCode != 0)
+            {
+                UnityEngine.Debug.LogError($"Butler push failed with exit code {butlerProcess.ExitCode}");
+            }
+
+            File.Delete("WebGL.zip");
+
+        }
+
         private static void BuildWebGL()
         {
             string[] scenes =
@@ -43,3 +73,4 @@ namespace JamKit
         }
     }
 }
+#endif
