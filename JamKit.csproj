@@ -60,6 +60,8 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\JamKit\CoroutineStarter.cs" />
      <Compile Include="Assets\Scripts\JamKit\Curve.cs" />
+     <Compile Include="Assets\Scripts\JamKit\DrawIfAttribute.cs" />
+     <Compile Include="Assets\Scripts\JamKit\Editor\DrawIfPropertyDrawer.cs" />
      <Compile Include="Assets\Scripts\JamKit\Editor\EditorUtils.cs" />
      <Compile Include="Assets\Scripts\JamKit\FirstPersonController\AimController.cs" />
      <Compile Include="Assets\Scripts\JamKit\FirstPersonController\Drawing.cs" />
@@ -68,6 +70,8 @@
      <Compile Include="Assets\Scripts\JamKit\FirstPersonController\MouseLook.cs" />
      <Compile Include="Assets\Scripts\JamKit\FirstPersonController\Player.cs" />
      <Compile Include="Assets\Scripts\JamKit\FirstPersonController\PlayerMotor.cs" />
+     <Compile Include="Assets\Scripts\JamKit\Fx\SpriteFx.cs" />
+     <Compile Include="Assets\Scripts\JamKit\Fx\SpriteFxDatabase.cs" />
      <Compile Include="Assets\Scripts\JamKit\Sfx.cs" />
      <Compile Include="Assets\Scripts\JamKit\SfxDatabase.cs" />
      <Compile Include="Assets\Scripts\JamKit\SingletonBehaviour.cs" />
