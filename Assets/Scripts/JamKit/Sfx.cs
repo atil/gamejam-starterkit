@@ -33,6 +33,12 @@ namespace JamKit
         {
             foreach (AudioClip audioClip in _database.Clips)
             {
+                if (audioClip == null)
+                {
+                    Debug.LogWarning("There's a null clip in the sfx database");
+                    continue;
+                }
+                
                 if (audioClip.name == clipName)
                 {
                     return audioClip;
@@ -78,6 +84,21 @@ namespace JamKit
                 duration,
                 t => { _musicAudioSource.volume = Mathf.Lerp(MusicVolume, 0f, t); },
                 () => { _musicAudioSource.volume = 0f; });
+        }
+        
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.M))
+            {
+                if (_musicAudioSource.volume > 0.01f)
+                {
+                    _musicAudioSource.volume = 0f;
+                }
+                else
+                {
+                    _musicAudioSource.volume = MusicVolume;
+                }
+            }
         }
 
     }
