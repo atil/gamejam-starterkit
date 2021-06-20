@@ -1,5 +1,6 @@
 ﻿// JAMKIT: Taken from
 // https://forum.unity.com/threads/draw-a-field-only-if-a-condition-is-met.448855/#post-3435603
+#if UNITY_EDITOR
 namespace JamKit
 {
     using UnityEditor;
@@ -79,3 +80,4 @@ namespace JamKit
         }
     }
 }
+#endif

@@ -16,6 +16,12 @@ namespace JamKit
             {
                 return;
             }
+            
+            if (collider.gameObject.layer != 1 << LayerMask.NameToLayer("Trigger"))
+            {
+                Debug.Log("Other trigger");
+                return;
+            }
 
             _isTriggered = true;
             OnTriggered();

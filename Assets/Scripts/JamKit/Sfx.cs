@@ -14,13 +14,14 @@ namespace JamKit
         private const float MusicVolume = 0.5f;
 
         private SfxDatabase _database;
-        
+        private bool _isMusicPaused;
+
         private void Awake()
         {
             _commonAudioSource = gameObject.AddComponent<AudioSource>();
             _commonAudioSource.volume = SfxVolume;
             _musicAudioSource = gameObject.AddComponent<AudioSource>();
-            _musicAudioSource.volume = SfxVolume;
+            _musicAudioSource.volume = MusicVolume;
             _database = Resources.Load<SfxDatabase>("Sfx/SfxDatabase");
             if (Camera.main != null)
             {
@@ -38,14 +39,27 @@ namespace JamKit
                     Debug.LogWarning("There's a null clip in the sfx database");
                     continue;
                 }
-                
+
                 if (audioClip.name == clipName)
                 {
                     return audioClip;
                 }
             }
+
             Debug.LogError($"Audioclip not found: {clipName}");
             return null;
+        }
+
+        public void StartMusic(string clipName, bool isLooped)
+        {
+            AudioClip clip = GetClip(clipName);
+            if (clip != null)
+            {
+                _musicAudioSource.loop = isLooped;
+                _musicAudioSource.clip = clip;
+                _musicAudioSource.volume = _isMusicPaused ? 0f : MusicVolume;
+                _musicAudioSource.Play();
+            }
         }
 
         public void PlayRandom(string clipPrefix)
@@ -85,7 +99,7 @@ namespace JamKit
                 t => { _musicAudioSource.volume = Mathf.Lerp(MusicVolume, 0f, t); },
                 () => { _musicAudioSource.volume = 0f; });
         }
-        
+
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.M))
@@ -93,14 +107,14 @@ namespace JamKit
                 if (_musicAudioSource.volume > 0.01f)
                 {
                     _musicAudioSource.volume = 0f;
+                    _isMusicPaused = true;
                 }
                 else
                 {
                     _musicAudioSource.volume = MusicVolume;
+                    _isMusicPaused = false;
                 }
             }
         }
-
     }
-
 }
