@@ -38,9 +38,9 @@ namespace JamKit
                 UnityEngine.Debug.Log("Deploy cancelled");
                 return;
             }
-            
-            const string projectName = "TEST"; // Set this when you open a project in itch
-            
+
+            const string projectName = "cacti"; // Set this when you open a project in itch
+
             BuildWebGL();
 
             Process zipProcess = Process.Start("7z.exe", "a WebGL.zip ./Build/WebGL/* -r");
@@ -48,10 +48,15 @@ namespace JamKit
             UnityEngine.Debug.Log("Zipped build, proceeding with upload");
             Process butlerProcess = Process.Start("butler.exe", $"push WebGL.zip torrenglabs/{projectName}:win");
             butlerProcess.WaitForExit();
-            EditorUtility.DisplayDialog("", "Deploy done", "OK good");
-            UnityEngine.Debug.Log("Deploy done");
-            if (butlerProcess.ExitCode != 0)
+            if (butlerProcess.ExitCode == 0)
             {
+                EditorUtility.DisplayDialog("", "Deploy done", "OK good");
+                UnityEngine.Debug.Log("Deploy done");
+
+            }
+            else
+            {
+                EditorUtility.DisplayDialog("", "Deploy failed :(", "Damn...");
                 UnityEngine.Debug.LogError($"Butler push failed with exit code {butlerProcess.ExitCode}");
             }
 
