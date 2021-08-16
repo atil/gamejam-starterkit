@@ -23,10 +23,11 @@ namespace JamKit
             _musicAudioSource = gameObject.AddComponent<AudioSource>();
             _musicAudioSource.volume = MusicVolume;
             _database = Resources.Load<SfxDatabase>("Sfx/SfxDatabase");
-            if (Camera.main != null)
-            {
-                transform.SetParent(Camera.main.transform);
-            }
+        }
+
+        public void FollowTransform(Transform t)
+        {
+            transform.SetParent(t);
         }
 
         [CanBeNull]
