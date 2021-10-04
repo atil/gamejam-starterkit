@@ -2,8 +2,8 @@
 
 namespace JamKit
 {
-    [CreateAssetMenu(fileName = "SpriteDatabase", menuName = "Torreng/SpriteDatabase", order = 0)]
-    public class SpriteDatabase : ScriptableObject
+    [CreateAssetMenu(fileName = "SpriteFxDatabase", menuName = "Torreng/SpriteFxDatabase", order = 0)]
+    public class SpriteFxDatabase : ScriptableObject
     {
         [SerializeField] private SpriteFx[] _allSpritesheets;
 

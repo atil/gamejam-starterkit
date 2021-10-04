@@ -59,4 +59,9 @@ public class CoroutineStarter : MonoBehaviour
     {
         _slave.StopCoroutine(function);
     }
+
+    public static void Stop(IEnumerator function)
+    {
+        _slave.StopCoroutine(function);
+    }
 }

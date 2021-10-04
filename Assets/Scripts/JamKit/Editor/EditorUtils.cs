@@ -39,7 +39,7 @@ namespace JamKit
                 return;
             }
 
-            const string projectName = "cacti"; // Set this when you open a project in itch
+            const string projectName = "lorem ipsum"; // Set this when you open a project in itch
 
             BuildWebGL();
 
@@ -50,18 +50,17 @@ namespace JamKit
             butlerProcess.WaitForExit();
             if (butlerProcess.ExitCode == 0)
             {
-                EditorUtility.DisplayDialog("", "Deploy done", "OK good");
+                EditorUtility.DisplayDialog("Deploy done", "", "OK good");
                 UnityEngine.Debug.Log("Deploy done");
 
             }
             else
             {
-                EditorUtility.DisplayDialog("", "Deploy failed :(", "Damn...");
+                EditorUtility.DisplayDialog("Deploy failed :(", "Don't know why though...", "Damn");
                 UnityEngine.Debug.LogError($"Butler push failed with exit code {butlerProcess.ExitCode}");
             }
 
             File.Delete("WebGL.zip");
-
         }
 
         private static void BuildWebGL()
@@ -73,9 +72,7 @@ namespace JamKit
                 "Assets/Scenes/End.unity",
             };
 
-            const string buildPath = "Build/WebGL";
-
-            BuildPipeline.BuildPlayer(scenes, buildPath, BuildTarget.WebGL, BuildOptions.None);
+            BuildPipeline.BuildPlayer(scenes, "Build/WebGL", BuildTarget.WebGL, BuildOptions.None);
         }
     }
 }

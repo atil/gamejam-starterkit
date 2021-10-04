@@ -90,12 +90,12 @@ namespace JamKit
         {
             _musicAudioSource.clip = GetClip(clipName);
             _musicAudioSource.volume = MusicVolume;
+            _musicAudioSource.Play();
         }
 
         public void FadeOutMusic(float duration)
         {
-            AnimationCurve linearCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
-            Curve.Tween(linearCurve,
+            Curve.Tween(AnimationCurve.Linear(0f, 0f, 1f, 1f),
                 duration,
                 t => { _musicAudioSource.volume = Mathf.Lerp(MusicVolume, 0f, t); },
                 () => { _musicAudioSource.volume = 0f; });

@@ -24,9 +24,9 @@ namespace JamKit
             }
         }
         
-        public static IEnumerator Tween(AnimationCurve curve, float duration, Action<float> perTickAction)
+        public static Coroutine TweenCoroutine(AnimationCurve curve, float duration, Action<float> perTickAction)
         {
-            yield return CoroutineStarter.Run(TweenCoroutine(curve, duration, perTickAction, () => { }));
+            return CoroutineStarter.Run(TweenCoroutine(curve, duration, perTickAction, () => { }));
         }
 
         public static void Tween(AnimationCurve curve, float duration, Action<float> perTickAction, Action postAction)
