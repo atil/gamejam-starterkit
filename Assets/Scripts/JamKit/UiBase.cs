@@ -23,12 +23,13 @@ namespace JamKit
     public abstract class UiBase : MonoBehaviour
     {
         [SerializeField] private Image _coverImage = default;
+        protected Image CoverImage => _coverImage;
 
         protected void Flash(FlashInfo flashInfo)
         {
             Flash(flashInfo, null);
         }
-        
+
         protected void Flash(FlashInfo flashInfo, Action postAction)
         {
             Curve.Tween(flashInfo.Curve,
@@ -39,7 +40,7 @@ namespace JamKit
                     _coverImage.color = flashInfo.EndColor;
                     postAction?.Invoke();
                 });
-            
+
         }
     }
 }

@@ -23,7 +23,7 @@ namespace JamKit
                 return _instance;
             }
         }
-        
+
         public static Coroutine TweenCoroutine(AnimationCurve curve, float duration, Action<float> perTickAction)
         {
             return CoroutineStarter.Run(TweenCoroutine(curve, duration, perTickAction, () => { }));
@@ -52,7 +52,7 @@ namespace JamKit
 
         private static IEnumerator TweenInfiniteCoroutine(AnimationCurve curve, float duration, Action<float> perTickAction)
         {
-            for (float f = 0f;; f += Time.deltaTime)
+            for (float f = 0f; ; f += Time.deltaTime)
             {
                 perTickAction(curve.Evaluate(f / duration));
                 if (f >= duration)
@@ -63,5 +63,25 @@ namespace JamKit
                 yield return null;
             }
         }
+
+        public static void TweenDiscrete(AnimationCurve curve, float duration, float tickInterval, Action<float> perTickAction, Action postAction)
+        {
+            CoroutineStarter.Run(TweenDiscreteCoroutine(curve, duration, tickInterval, perTickAction, postAction));
+        }
+
+        private static IEnumerator TweenDiscreteCoroutine(AnimationCurve curve, float duration, float tickInterval, Action<float> perTickAction, Action postAction)
+        {
+            int tickCount = (int)(duration / tickInterval);
+
+            for (int i = 0; i < tickCount; i++)
+            {
+                float t = (float)i / tickCount;
+                perTickAction(curve.Evaluate(t));
+                yield return new WaitForSeconds(tickInterval);
+            }
+
+            postAction();
+        }
+
     }
 }
