@@ -4,10 +4,8 @@ Logs
 obj
 .vs
 Build
+UserSettings
 .idea
-Assembly-CSharp-Editor-firstpass.csproj
-Assembly-CSharp-Editor.csproj
-Assembly-CSharp-firstpass.csproj
-Assembly-CSharp.csproj
-GameJam.sln
+*.csproj
+*.sln
 *.vsconfig
