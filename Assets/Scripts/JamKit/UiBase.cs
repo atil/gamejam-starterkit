@@ -4,43 +4,68 @@ using UnityEngine.UI;
 
 namespace JamKit
 {
-    [Serializable]
-    public class FlashInfo
-    {
-        [SerializeField] private Color _startColor = default;
-        public Color StartColor => _startColor;
-
-        [SerializeField] private Color _endColor = default;
-        public Color EndColor => _endColor;
-
-        [SerializeField] private float _duration = default;
-        public float Duration => _duration;
-
-        [SerializeField] private AnimationCurve _curve = default;
-        public AnimationCurve Curve => _curve;
-    }
-
     public abstract class UiBase : MonoBehaviour
     {
+        private enum FadeType
+        {
+            FadeIn, FadeOut
+        }
+
+        [SerializeField] private Globals _globals;
+        protected Globals Globals => _globals;
+
+        [SerializeField] private Camera _camera;
+        protected Camera Camera => _camera;
+
         [SerializeField] private Image _coverImage = default;
         protected Image CoverImage => _coverImage;
 
-        protected void Flash(FlashInfo flashInfo)
+        public virtual SceneTransitionParams SceneTransitionParams => _globals.SceneTransitionParams;
+
+        protected void FadeIn(SceneTransitionParams sceneTransitionParams = null, Action postAction = null)
         {
-            Flash(flashInfo, null);
+            Fade(FadeType.FadeIn, sceneTransitionParams, postAction);
         }
 
-        protected void Flash(FlashInfo flashInfo, Action postAction)
+        protected void FadeOut(SceneTransitionParams sceneTransitionParams = null, Action postAction = null)
         {
-            Curve.Tween(flashInfo.Curve,
-                flashInfo.Duration,
-                t => { _coverImage.color = Color.Lerp(flashInfo.StartColor, flashInfo.EndColor, t); },
+            Fade(FadeType.FadeOut, sceneTransitionParams, postAction);
+        }
+
+        private void Fade(FadeType type, SceneTransitionParams sceneTransitionParams, Action postAction)
+        {
+            if (sceneTransitionParams == null)
+            {
+                sceneTransitionParams = _globals.SceneTransitionParams;
+            }
+
+            Color srcColor = type == FadeType.FadeIn ? sceneTransitionParams.Color : Color.clear;
+            Color targetColor = type == FadeType.FadeIn ? Color.clear : sceneTransitionParams.Color;
+
+            if (sceneTransitionParams.IsDiscrete)
+            {
+                Curve.TweenDiscrete(sceneTransitionParams.Curve,
+                    sceneTransitionParams.Duration,
+                    _globals.DiscreteTickInterval,
+                    t => { _coverImage.color = Color.Lerp(srcColor, targetColor, t); },
+                    () =>
+                    {
+                        _coverImage.color = targetColor;
+                        postAction?.Invoke();
+                    });
+            }
+            else
+            {
+                Curve.Tween(sceneTransitionParams.Curve,
+                sceneTransitionParams.Duration,
+                t => { _coverImage.color = Color.Lerp(srcColor, targetColor, t); },
                 () =>
                 {
-                    _coverImage.color = flashInfo.EndColor;
+                    _coverImage.color = targetColor;
                     postAction?.Invoke();
                 });
-
+            }
         }
+
     }
 }

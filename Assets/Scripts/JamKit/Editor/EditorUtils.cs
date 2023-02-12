@@ -40,6 +40,13 @@ namespace JamKit
             }
 
             const string projectName = "lorem ipsum"; // Set this when you open a project in itch
+            // Also make sure that "data caching" is off and "compression format" is gzip in publishing settings
+
+            Globals globals = Resources.Load<Globals>("Globals");
+            if (globals != null)
+            {
+                PlayerSettings.SplashScreen.backgroundColor = globals.BuildSplashBackgroundColor;
+            }
 
             BuildWebGL();
 
@@ -52,7 +59,6 @@ namespace JamKit
             {
                 EditorUtility.DisplayDialog("Deploy done", "", "OK good");
                 UnityEngine.Debug.Log("Deploy done");
-
             }
             else
             {

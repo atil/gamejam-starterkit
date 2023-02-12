@@ -8,18 +8,17 @@ namespace Game
     public class EndUi : UiBase
     {
         [SerializeField] private Button _playButton;
-        [SerializeField] private FlashInfo _openFlashInfo;
-        [SerializeField] private FlashInfo _closeFlashInfo;
 
         void Start()
         {
-            Flash(_openFlashInfo);
+            Camera.backgroundColor = Globals.EndSceneCameraBackgroundColor;
+            FadeIn();
         }
-        
+
         public void OnClickedPlayButton()
         {
             _playButton.interactable = false;
-            Flash(_closeFlashInfo, () => SceneManager.LoadScene("Game"));
+            FadeOut(null, () => SceneManager.LoadScene("Game"));
         }
     }
 }
