@@ -5,24 +5,22 @@ using UnityEngine;
 
 namespace JamKit
 {
-    public class Sfx : SingletonBehaviour<Sfx>
+    public partial class JamKit
     {
-        private AudioSource _commonAudioSource;
-        private AudioSource _musicAudioSource;
+        [Header("Sfx")]
+        [SerializeField] private AudioSource _commonAudioSource;
+        [SerializeField] private AudioSource _musicAudioSource;
+        [SerializeField] private SfxDatabase _database;
 
         private const float SfxVolume = 0.5f;
         private const float MusicVolume = 0.5f;
 
-        private SfxDatabase _database;
         private bool _isMusicPaused;
 
-        private void Awake()
+        private void StartSfx()
         {
-            _commonAudioSource = gameObject.AddComponent<AudioSource>();
             _commonAudioSource.volume = SfxVolume;
-            _musicAudioSource = gameObject.AddComponent<AudioSource>();
             _musicAudioSource.volume = MusicVolume;
-            _database = Resources.Load<SfxDatabase>("Sfx/SfxDatabase");
         }
 
         public void FollowTransform(Transform t)
@@ -95,7 +93,7 @@ namespace JamKit
 
         public void FadeOutMusic(float duration)
         {
-            Curve.Tween(AnimationCurve.Linear(0f, 0f, 1f, 1f),
+            Tween(AnimationCurve.Linear(0f, 0f, 1f, 1f),
                 duration,
                 t => { _musicAudioSource.volume = Mathf.Lerp(MusicVolume, 0f, t); },
                 () => { _musicAudioSource.volume = 0f; });
