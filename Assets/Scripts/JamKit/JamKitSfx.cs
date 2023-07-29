@@ -29,8 +29,9 @@ namespace JamKit
         }
 
         [CanBeNull]
-        private AudioClip GetClip(string clipName)
+        private bool TryGetClip(string clipName, out AudioClip clip)
         {
+            clip = null;
             foreach (AudioClip audioClip in _database.Clips)
             {
                 if (audioClip == null)
@@ -41,18 +42,18 @@ namespace JamKit
 
                 if (audioClip.name == clipName)
                 {
-                    return audioClip;
+                    clip = audioClip;
+                    return true;
                 }
             }
 
             Debug.LogError($"Audioclip not found: {clipName}");
-            return null;
+            return false;
         }
 
         public void StartMusic(string clipName, bool isLooped)
         {
-            AudioClip clip = GetClip(clipName);
-            if (clip != null)
+            if (TryGetClip(clipName, out AudioClip clip))
             {
                 _musicAudioSource.loop = isLooped;
                 _musicAudioSource.clip = clip;
@@ -77,8 +78,7 @@ namespace JamKit
 
         public void Play(string clipName)
         {
-            AudioClip clip = GetClip(clipName);
-            if (clip != null)
+            if (TryGetClip(clipName, out AudioClip clip))
             {
                 _commonAudioSource.PlayOneShot(clip);
             }
@@ -86,9 +86,12 @@ namespace JamKit
 
         public void ChangeMusicTrack(string clipName)
         {
-            _musicAudioSource.clip = GetClip(clipName);
-            _musicAudioSource.volume = MusicVolume;
-            _musicAudioSource.Play();
+            if (TryGetClip(clipName, out AudioClip clip))
+            {
+                _musicAudioSource.clip = clip;
+                _musicAudioSource.volume = MusicVolume;
+                _musicAudioSource.Play();
+            }
         }
 
         public void FadeOutMusic(float duration)
@@ -99,7 +102,15 @@ namespace JamKit
                 () => { _musicAudioSource.volume = 0f; });
         }
 
-        private void Update()
+        public void PlayOneShot(string clipName, Vector3 position, float volume = 1.0f)
+        {
+            if (TryGetClip(clipName, out AudioClip clip))
+            {
+                AudioSource.PlayClipAtPoint(clip, position, volume);
+            }
+        }
+
+        private void UpdateSfx()
         {
             if (Input.GetKeyDown(KeyCode.M))
             {

@@ -20,5 +20,10 @@ namespace JamKit
         {
             StartSfx();
         }
+
+        private void Update()
+        {
+            UpdateSfx();
+        }
     }
 }
