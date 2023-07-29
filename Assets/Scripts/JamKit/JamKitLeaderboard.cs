@@ -14,7 +14,7 @@ namespace JamKit
         public DateTime date;
     }
 
-    public class Leaderboard 
+    public partial class JamKit
     {
         //private const string serverUrl = "http://localhost:3000";
         private const string serverUrl = "https://torrengserver.onrender.com";
@@ -25,12 +25,12 @@ namespace JamKit
             public ScoreEntry[] scores;
         }
 
-        public static void GetScores(Action<bool, ScoreEntry[]> callback)
+        public void GetScores(Action<bool, ScoreEntry[]> callback)
         {
-            CoroutineStarter.Run(GetScoresCoroutine(callback));
+            Run(GetScoresCoroutine(callback));
         }
 
-        private static IEnumerator GetScoresCoroutine(Action<bool, ScoreEntry[]> callback)
+        private IEnumerator GetScoresCoroutine(Action<bool, ScoreEntry[]> callback)
         {
             using (UnityWebRequest request = UnityWebRequest.Get(serverUrl + "/scores"))
             {
@@ -51,9 +51,9 @@ namespace JamKit
             }
         }
 
-        public static void PostScore(string name, int score)
+        public void PostScore(string name, int score)
         {
-            CoroutineStarter.Run(PostCoroutine(name, score));
+            Run(PostCoroutine(name, score));
         }
 
         private static IEnumerator PostCoroutine(string name, int score)

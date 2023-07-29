@@ -227,5 +227,21 @@ namespace JamKit
 
             return list[UnityEngine.Random.Range(0, list.Count)];
         }
+
+        public static Color HexToColor(string hex)
+        {
+            if (hex[0] != '#')
+            {
+                hex = "#" + hex;
+            }
+
+            if (ColorUtility.TryParseHtmlString(hex, out Color color))
+            {
+                return color;
+            }
+
+            Debug.LogError($"Failed to parse hex as color {hex}");
+            return Color.white;
+        }
     }
 }
