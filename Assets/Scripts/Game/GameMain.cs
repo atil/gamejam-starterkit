@@ -1,16 +1,17 @@
 ﻿using JamKit;
-using UnityEngine;
 
 namespace Game
 {
-    public class GameMain : MonoBehaviour
+    public class GameMain : SceneRoot
     {
-        [SerializeField] private JamKit.JamKit _jamkit;
-        [SerializeField] private GameUi _ui;
-
-        private void Start()
+        protected override void InitScene()
         {
-            // get cracking
         }
+
+        public override string Tick()
+        {
+            return "Game";
+        }
+
     }
 }

@@ -1,43 +1,57 @@
-﻿using System;
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace JamKit
 {
-    public abstract class UiBase : MonoBehaviour
+    public interface IScene
+    {
+        void Init(JamKit jamKit, Camera camera);
+        string Tick();
+        IEnumerator Exit();
+    }
+
+    public abstract class SceneRoot : MonoBehaviour, IScene
     {
         private enum FadeType
         {
             FadeIn, FadeOut
         }
 
-        [SerializeField] private JamKit _jamKit;
+        [SerializeField] private Image _coverImage;
 
-        protected Globals Globals => _jamKit.Globals;
+        protected JamKit JamKit { get; private set; }
+        protected Camera Camera { get; private set; }
 
-        [SerializeField] private Camera _camera;
-        protected Camera Camera => _camera;
-
-        [SerializeField] private Image _coverImage = default;
-        protected Image CoverImage => _coverImage;
-
-        public virtual SceneTransitionParams SceneTransitionParams => Globals.SceneTransitionParams;
-
-        protected void FadeIn(SceneTransitionParams sceneTransitionParams = null, Action postAction = null)
+        public void Init(JamKit jamKit, Camera camera)
         {
-            Fade(FadeType.FadeIn, sceneTransitionParams, postAction);
+            JamKit = jamKit;
+            Camera = camera;
+
+            Fade(FadeType.FadeIn, JamKit.Globals.SceneTransitionParams, null);
         }
 
-        protected void FadeOut(SceneTransitionParams sceneTransitionParams = null, Action postAction = null)
+        protected abstract void InitScene();
+
+        public abstract string Tick();
+
+        public virtual IEnumerator Exit()
         {
-            Fade(FadeType.FadeOut, sceneTransitionParams, postAction);
+            bool isFadeTransitioning = true;
+            Fade(FadeType.FadeOut, JamKit.Globals.SceneTransitionParams, () =>
+            {
+                isFadeTransitioning = false;
+            });
+
+            yield return new WaitWhile(() => { return isFadeTransitioning; });
         }
 
         private void Fade(FadeType type, SceneTransitionParams sceneTransitionParams, Action postAction)
         {
             if (sceneTransitionParams == null)
             {
-                sceneTransitionParams = Globals.SceneTransitionParams;
+                sceneTransitionParams = JamKit.Globals.SceneTransitionParams;
             }
 
             Color srcColor = type == FadeType.FadeIn ? sceneTransitionParams.Color : Color.clear;
@@ -45,9 +59,9 @@ namespace JamKit
 
             if (sceneTransitionParams.IsDiscrete)
             {
-                _jamKit.TweenDiscrete(sceneTransitionParams.Curve,
+                JamKit.TweenDiscrete(sceneTransitionParams.Curve,
                     sceneTransitionParams.Duration,
-                    Globals.DiscreteTickInterval,
+                    JamKit.Globals.DiscreteTickInterval,
                     t =>
                     {
                         _coverImage.color = Color.Lerp(srcColor, targetColor, t);
@@ -60,7 +74,7 @@ namespace JamKit
             }
             else
             {
-                _jamKit.Tween(sceneTransitionParams.Curve,
+                JamKit.Tween(sceneTransitionParams.Curve,
                     sceneTransitionParams.Duration,
                     t =>
                     {

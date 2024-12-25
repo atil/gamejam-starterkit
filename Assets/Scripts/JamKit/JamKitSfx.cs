@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace JamKit
@@ -28,7 +27,6 @@ namespace JamKit
             transform.SetParent(t);
         }
 
-        [CanBeNull]
         private bool TryGetClip(string clipName, out AudioClip clip)
         {
             clip = null;
@@ -76,21 +74,11 @@ namespace JamKit
             }
         }
 
-        public void Play(string clipName)
+        public void PlaySfx(string clipName)
         {
             if (TryGetClip(clipName, out AudioClip clip))
             {
                 _commonAudioSource.PlayOneShot(clip);
-            }
-        }
-
-        public void ChangeMusicTrack(string clipName)
-        {
-            if (TryGetClip(clipName, out AudioClip clip))
-            {
-                _musicAudioSource.clip = clip;
-                _musicAudioSource.volume = MusicVolume;
-                _musicAudioSource.Play();
             }
         }
 
@@ -112,7 +100,7 @@ namespace JamKit
 
         private void UpdateSfx()
         {
-            if (Input.GetKeyDown(KeyCode.M))
+            if (Input.GetKeyDown(KeyCode.M) && Input.GetKey(KeyCode.LeftControl))
             {
                 if (_musicAudioSource.volume > 0.01f)
                 {
