@@ -10,6 +10,7 @@ namespace JamKit
         private void Start()
         {
             StartSfx();
+            StartLeaderboard();
         }
 
         private void Update()

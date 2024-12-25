@@ -11,15 +11,13 @@ namespace JamKit
         [SerializeField] private AudioSource _musicAudioSource;
         [SerializeField] private SfxDatabase _database;
 
-        private const float SfxVolume = 0.5f;
-        private const float MusicVolume = 0.5f;
+        private float _musicVolume = 0.15f;
 
         private bool _isMusicPaused;
 
         private void StartSfx()
         {
-            _commonAudioSource.volume = SfxVolume;
-            _musicAudioSource.volume = MusicVolume;
+            _musicVolume = _musicAudioSource.volume;
         }
 
         public void FollowTransform(Transform t)
@@ -55,7 +53,7 @@ namespace JamKit
             {
                 _musicAudioSource.loop = isLooped;
                 _musicAudioSource.clip = clip;
-                _musicAudioSource.volume = _isMusicPaused ? 0f : MusicVolume;
+                _musicAudioSource.volume = _isMusicPaused ? 0f : _musicVolume;
                 _musicAudioSource.Play();
             }
         }
@@ -86,7 +84,7 @@ namespace JamKit
         {
             Tween(AnimationCurve.Linear(0f, 0f, 1f, 1f),
                 duration,
-                t => { _musicAudioSource.volume = Mathf.Lerp(MusicVolume, 0f, t); },
+                t => { _musicAudioSource.volume = Mathf.Lerp(_musicVolume, 0f, t); },
                 () => { _musicAudioSource.volume = 0f; });
         }
 
@@ -109,7 +107,7 @@ namespace JamKit
                 }
                 else
                 {
-                    _musicAudioSource.volume = MusicVolume;
+                    _musicAudioSource.volume = _musicVolume;
                     _isMusicPaused = false;
                 }
             }

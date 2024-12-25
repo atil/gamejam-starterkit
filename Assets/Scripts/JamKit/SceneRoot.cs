@@ -30,6 +30,8 @@ namespace JamKit
             Camera = camera;
 
             Fade(FadeType.FadeIn, JamKit.Globals.SceneTransitionParams, null);
+
+            InitScene();
         }
 
         protected abstract void InitScene();

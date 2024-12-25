@@ -16,8 +16,6 @@ namespace JamKit
         private IEnumerator Start()
         {
             yield return _jamKit.Run(ChangeSceneCoroutine("", _currentSceneName));
-
-            _currentScene.Init(_jamKit, _camera);
         }
 
         private void Update()

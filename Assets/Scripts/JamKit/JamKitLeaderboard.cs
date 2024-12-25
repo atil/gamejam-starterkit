@@ -6,75 +6,91 @@ using UnityEngine.Networking;
 
 namespace JamKit
 {
-    [System.Serializable]
-    public class ScoreEntry
+    public class LeaderboardEntry
     {
-        public string name;
-        public int score;
-        public DateTime date;
+        public string PlayerName;
+        public int Score;
     }
-
+    
     public partial class JamKit
     {
-        //private const string serverUrl = "http://localhost:3000";
-        private const string serverUrl = "https://torrengserver.onrender.com";
+        [SerializeField] private TextAsset _leaderboardEnv;
 
-        [System.Serializable]
-        private class Response
-        {
-            public ScoreEntry[] scores;
-        }
+        public bool IsLeaderboardRequestRunning { get; private set; }
 
-        public void GetScores(Action<bool, ScoreEntry[]> callback)
-        {
-            Run(GetScoresCoroutine(callback));
-        }
+        private bool _isLeaderboardEnabled = false;
+        private const string DreamloUrl = "https://dreamlo.com/lb";
+        private string _dreamloPrivateKey = "";
+        private string _dreamloPublicKey = "";
 
-        private IEnumerator GetScoresCoroutine(Action<bool, ScoreEntry[]> callback)
+        private void StartLeaderboard()
         {
-            using (UnityWebRequest request = UnityWebRequest.Get(serverUrl + "/scores"))
+            string[] lines = _leaderboardEnv?.text.Split('\n');
+            _isLeaderboardEnabled = lines != null && lines.Length == 2;
+
+            if (_isLeaderboardEnabled)
             {
-                request.SetRequestHeader("Authorization", "Basic osman1234");
-
-                yield return request.SendWebRequest();
-
-                if (request.result != UnityWebRequest.Result.Success)
-                {
-                    Debug.LogError("Leaderboard get fail");
-                    callback(false, new ScoreEntry[] { });
-                    yield break;
-                }
-
-                Response res = JsonUtility.FromJson<Response>(request.downloadHandler.text);
-
-                callback(true, res.scores);
+                _dreamloPrivateKey = lines[0];
+                _dreamloPublicKey = lines[1];
             }
         }
 
-        public void PostScore(string name, int score)
+        public void GetLeaderboard(Action<LeaderboardEntry[]> onLeaderboardFetched)
         {
-            Run(PostCoroutine(name, score));
+            if (!_isLeaderboardEnabled) return;
+
+            string req = $"{DreamloUrl}/{_dreamloPublicKey}/pipe/5";
+            Run(GetCoroutine(req, onLeaderboardFetched));
         }
 
-        private static IEnumerator PostCoroutine(string name, int score)
+        private IEnumerator GetCoroutine(string url, Action<LeaderboardEntry[]> onLeaderboardFetched)
         {
-            Dictionary<string, string> postData = new Dictionary<string, string>()
+            IsLeaderboardRequestRunning = true;
+            using UnityWebRequest www = UnityWebRequest.Get(url);
+            yield return www.SendWebRequest();
+            IsLeaderboardRequestRunning = false;
+
+            string[] lines = www.downloadHandler.text.Split('\n');
+            if (lines.Length == 0) yield break; // Empty leaderboard
+            
+            // NOTE: We're assuming a leaderboard with a single entry has a newline character at the end
+            LeaderboardEntry[] entries = new LeaderboardEntry[lines.Length - 1];
+            for (int i = 0; i < lines.Length - 1; i++)
             {
-                { "name", name },
-                { "score", score.ToString() },
-            };
+                string[] fields = lines[i].Split('|');
+                Debug.Assert(fields.Length == 6, $"Line is malformed: {lines[i]}");
 
-            using (UnityWebRequest request = UnityWebRequest.Post(serverUrl + "/new-score", postData))
-            {
-                request.SetRequestHeader("Authorization", "Basic osman1234");
+                string playerName = fields[0];
+                int.TryParse(fields[1], out int score);
+                int.TryParse(fields[2], out int unusedInt);
+                string unusuedString = fields[3];
+                DateTime.TryParse(fields[4], out DateTime unusedDateTime);
+                int.TryParse(fields[5], out int rank);
 
-                yield return request.SendWebRequest();
-
-                if (request.result != UnityWebRequest.Result.Success)
+                entries[i] = new LeaderboardEntry
                 {
-                    Debug.LogError("Leaderboard post fail");
-                }
+                    PlayerName = playerName,
+                    Score = score
+                };
             }
+
+            onLeaderboardFetched(entries);
+        }
+
+        public void PostLeaderboardScore(string playerName, int score)
+        {
+            if (!_isLeaderboardEnabled) return;
+
+            string req = $"{DreamloUrl}/{_dreamloPrivateKey}/add/{playerName}/{score}";
+            Run(PostCoroutine(req));
+        }
+
+        private IEnumerator PostCoroutine(string url)
+        {
+            IsLeaderboardRequestRunning = true;
+            using UnityWebRequest www = UnityWebRequest.Get(url);
+            yield return www.SendWebRequest();
+            IsLeaderboardRequestRunning = false;
         }
     }
 }

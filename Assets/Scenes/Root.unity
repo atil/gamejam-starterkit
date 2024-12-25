@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _jamKit: {fileID: 1042202867}
-  _camera: {fileID: 0}
+  _camera: {fileID: 1018750420}
   _currentSceneName: Splash
 --- !u!4 &283082029
 Transform:
@@ -324,6 +324,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: JamKit
       objectReference: {fileID: 0}
+    - target: {fileID: 3350211567806347562, guid: 409f529f683b5054789039b119c187f4,
+        type: 3}
+      propertyPath: _leaderboardEnv
+      value: 
+      objectReference: {fileID: 4900000, guid: bf07980a245769d4bb4289eb30aebcac, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
