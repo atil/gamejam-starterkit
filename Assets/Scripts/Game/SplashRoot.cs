@@ -23,7 +23,7 @@ namespace Game
 
         public override string Tick()
         {
-            return _playButtonClicked ? "Game" : "Splash";
+            return _playButtonClicked ? "Game" : JamKit.SameScene;
         }
     }
 }

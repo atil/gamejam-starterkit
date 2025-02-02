@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -15,6 +14,7 @@ namespace JamKit
     public partial class JamKit
     {
         [SerializeField] private TextAsset _leaderboardEnv;
+        [SerializeField] private int _leaderboardPlayerCount = 5;
 
         public bool IsLeaderboardRequestRunning { get; private set; }
 
@@ -25,7 +25,15 @@ namespace JamKit
 
         private void StartLeaderboard()
         {
-            string[] lines = _leaderboardEnv?.text.Split('\n');
+            if (_leaderboardEnv == null)
+            {
+                // There should be two lines in this file
+                // [first line is the private key]
+                // [second line is the public key]
+                return;
+            }
+
+            string[] lines = _leaderboardEnv.text.Split('\n');
             _isLeaderboardEnabled = lines != null && lines.Length == 2;
 
             if (_isLeaderboardEnabled)
@@ -39,7 +47,7 @@ namespace JamKit
         {
             if (!_isLeaderboardEnabled) return;
 
-            string req = $"{DreamloUrl}/{_dreamloPublicKey}/pipe/5";
+            string req = $"{DreamloUrl}/{_dreamloPublicKey}/pipe/{_leaderboardPlayerCount}";
             Run(GetCoroutine(req, onLeaderboardFetched));
         }
 

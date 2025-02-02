@@ -2,12 +2,11 @@ Temp
 Library
 Logs
 obj
-.vs
 Build
 UserSettings
+.vs
+.vscode
 .idea
 *.csproj
 *.sln
 *.vsconfig
-LeaderboardKeys.txt
-LeaderboardKeys.txt.meta

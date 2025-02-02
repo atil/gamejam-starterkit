@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
+using UnityEditor.SceneManagement;
 
 namespace JamKit
 {
@@ -20,7 +21,9 @@ namespace JamKit
         [MenuItem("Torreng/Compile and Play #&p", false, 10)]
         private static void CompileAndPlay()
         {
+            EditorSceneManager.SaveOpenScenes();
             AssetDatabase.Refresh();
+            EditorSceneManager.OpenScene("Assets/Scenes/Root.unity", OpenSceneMode.Single);
             EditorApplication.isPlaying = true;
         }
 

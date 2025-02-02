@@ -22,22 +22,21 @@ namespace JamKit
     [CreateAssetMenu(menuName = "Torreng/Globals")]
     public class Globals : ScriptableObject
     {
-        [Header("Misc")]
         [SerializeField] private float _discreteTickInteval;
         public float DiscreteTickInterval => _discreteTickInteval;
 
-        [Header("Scene Transition")]
         [SerializeField] private SceneTransitionParams _sceneTransitionParams;
         public SceneTransitionParams SceneTransitionParams => _sceneTransitionParams;
 
-        [Header("Auxillary Scenes")]
         [SerializeField] private Color _splashSceneCameraBackgroundColor;
         public Color SplashSceneCameraBackgroundColor => _splashSceneCameraBackgroundColor;
+
+        [SerializeField] private Color _gameSceneCameraBackgroundColor;
+        public Color GameSceneCameraBackgroundColor => _gameSceneCameraBackgroundColor;
 
         [SerializeField] private Color _endSceneCameraBackgroundColor;
         public Color EndSceneCameraBackgroundColor => _endSceneCameraBackgroundColor;
 
-        [Header("Build")]
         [SerializeField] private Color _buildSplashBackgroundColor;
         public Color BuildSplashBackgroundColor => _buildSplashBackgroundColor;
     }

@@ -6,11 +6,12 @@ namespace Game
     {
         protected override void InitScene()
         {
+            Camera.backgroundColor = JamKit.Globals.GameSceneCameraBackgroundColor;
         }
 
         public override string Tick()
         {
-            return "Game";
+            return JamKit.SameScene;
         }
 
     }

@@ -26,7 +26,7 @@ namespace JamKit
             }
 
             string nextSceneName = _currentScene.Tick();
-            if (nextSceneName != _currentSceneName)
+            if (nextSceneName != _jamKit.SameScene)
             {
                 _jamKit.Run(ChangeSceneCoroutine(_currentSceneName, nextSceneName));
             }
@@ -44,7 +44,7 @@ namespace JamKit
 
             _currentSceneName = newSceneName;
             yield return SceneManager.LoadSceneAsync(newSceneName, new LoadSceneParameters(LoadSceneMode.Additive));
-            _currentScene = FindObjectOfType<SceneRoot>();
+            _currentScene = FindFirstObjectByType<SceneRoot>();
             _currentScene.Init(_jamKit, _camera);
             _isSceneLoading = false;
         }
