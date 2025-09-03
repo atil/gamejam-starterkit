@@ -44,9 +44,17 @@ namespace JamKit
 
             _currentSceneName = newSceneName;
             SceneManager.LoadScene(newSceneName, new LoadSceneParameters(LoadSceneMode.Additive));
-            _currentScene = FindFirstObjectByType<SceneRoot>();
-            _currentScene.Init(_jamKit, _camera);
-            _isSceneLoading = false;
+
+            _jamKit.TweenSeq(new TweenBase[] // HACK: LoadScene doesn't finish immediately
+                {
+                    new TweenDelay(0.2f),
+                    new TweenCallback(() =>
+                    {
+                        _currentScene = FindFirstObjectByType<SceneRoot>();
+                        _currentScene.Init(_jamKit, _camera);
+                        _isSceneLoading = false;
+                    })
+                });
         }
 
     }
