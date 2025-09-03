@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEditor.SceneManagement;
 
-namespace JamKit
+namespace Game
 {
     public static class EditorUtils
     {

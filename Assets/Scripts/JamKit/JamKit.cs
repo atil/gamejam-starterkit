@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace JamKit
+namespace Game
 {
     public partial class JamKit : MonoBehaviour
     {

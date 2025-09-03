@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace JamKit
+namespace Game
 {
     [CreateAssetMenu(fileName = "SfxDatabase", menuName = "Torreng/SfxDatabase", order = 0)]
     public class SfxDatabase : ScriptableObject

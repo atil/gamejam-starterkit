@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace JamKit
+namespace Game
 {
     public partial class JamKit
     {

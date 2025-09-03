@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace JamKit
+namespace Game
 {
     public class LeaderboardEntry
     {

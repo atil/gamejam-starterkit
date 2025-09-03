@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace JamKit
+namespace Game
 {
     public static class Util
     {

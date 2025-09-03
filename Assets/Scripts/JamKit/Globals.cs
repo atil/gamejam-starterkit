@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace JamKit
+namespace Game
 {
     [Serializable]
     public class SceneTransitionParams
@@ -34,8 +34,8 @@ namespace JamKit
         [SerializeField] private Color _gameSceneCameraBackgroundColor;
         public Color GameSceneCameraBackgroundColor => _gameSceneCameraBackgroundColor;
 
-        [SerializeField] private Color _endSceneCameraBackgroundColor;
-        public Color EndSceneCameraBackgroundColor => _endSceneCameraBackgroundColor;
+        [SerializeField] private Color _intermissionCameraBackgroundColor;
+        public Color IntermissionCameraBackgroundColor => _intermissionCameraBackgroundColor;
 
         [SerializeField] private Color _buildSplashBackgroundColor;
         public Color BuildSplashBackgroundColor => _buildSplashBackgroundColor;
