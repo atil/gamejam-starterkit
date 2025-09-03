@@ -48,7 +48,7 @@ namespace JamKit
             if (!_isLeaderboardEnabled) return;
 
             string req = $"{DreamloUrl}/{_dreamloPublicKey}/pipe/{_leaderboardPlayerCount}";
-            Run(GetCoroutine(req, onLeaderboardFetched));
+            StartCoroutine(GetCoroutine(req, onLeaderboardFetched));
         }
 
         private IEnumerator GetCoroutine(string url, Action<LeaderboardEntry[]> onLeaderboardFetched)
@@ -90,7 +90,7 @@ namespace JamKit
             if (!_isLeaderboardEnabled) return;
 
             string req = $"{DreamloUrl}/{_dreamloPrivateKey}/add/{playerName}/{score}";
-            Run(PostCoroutine(req));
+            StartCoroutine(PostCoroutine(req));
         }
 
         private IEnumerator PostCoroutine(string url)

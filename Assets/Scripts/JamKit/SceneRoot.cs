@@ -9,16 +9,11 @@ namespace JamKit
     {
         void Init(JamKit jamKit, Camera camera);
         string Tick();
-        IEnumerator Exit();
+        void Exit();
     }
 
     public abstract class SceneRoot : MonoBehaviour, IScene
     {
-        private enum FadeType
-        {
-            FadeIn, FadeOut
-        }
-
         [SerializeField] private Image _coverImage;
 
         protected JamKit JamKit { get; private set; }
@@ -29,7 +24,7 @@ namespace JamKit
             JamKit = jamKit;
             Camera = camera;
 
-            Fade(FadeType.FadeIn, JamKit.Globals.SceneTransitionParams, null);
+            JamKit.Tween(new TweenImageColor(_coverImage, JamKit.Globals.SceneTransitionParams.Color, JamKit.Globals.SceneTransitionParams.Duration));
 
             InitScene();
         }
@@ -38,57 +33,11 @@ namespace JamKit
 
         public abstract string Tick();
 
-        public virtual IEnumerator Exit()
+        public virtual void Exit()
         {
-            bool isFadeTransitioning = true;
-            Fade(FadeType.FadeOut, JamKit.Globals.SceneTransitionParams, () =>
-            {
-                isFadeTransitioning = false;
-            });
-
-            yield return new WaitWhile(() => { return isFadeTransitioning; });
+            JamKit.Tween(new TweenImageColor(_coverImage, Color.clear, JamKit.Globals.SceneTransitionParams.Duration));
         }
 
-        private void Fade(FadeType type, SceneTransitionParams sceneTransitionParams, Action postAction)
-        {
-            if (sceneTransitionParams == null)
-            {
-                sceneTransitionParams = JamKit.Globals.SceneTransitionParams;
-            }
-
-            Color srcColor = type == FadeType.FadeIn ? sceneTransitionParams.Color : Color.clear;
-            Color targetColor = type == FadeType.FadeIn ? Color.clear : sceneTransitionParams.Color;
-
-            if (sceneTransitionParams.IsDiscrete)
-            {
-                JamKit.TweenDiscrete(sceneTransitionParams.Curve,
-                    sceneTransitionParams.Duration,
-                    JamKit.Globals.DiscreteTickInterval,
-                    t =>
-                    {
-                        _coverImage.color = Color.Lerp(srcColor, targetColor, t);
-                    },
-                    () =>
-                    {
-                        _coverImage.color = targetColor;
-                        postAction?.Invoke();
-                    });
-            }
-            else
-            {
-                JamKit.Tween(sceneTransitionParams.Curve,
-                    sceneTransitionParams.Duration,
-                    t =>
-                    {
-                        _coverImage.color = Color.Lerp(srcColor, targetColor, t);
-                    },
-                    () =>
-                    {
-                        _coverImage.color = targetColor;
-                        postAction?.Invoke();
-                    });
-            }
-        }
 
     }
 }

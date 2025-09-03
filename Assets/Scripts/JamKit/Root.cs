@@ -13,9 +13,9 @@ namespace JamKit
         private bool _isSceneLoading;
         [SerializeField] private string _currentSceneName = "Game";
 
-        private IEnumerator Start()
+        private void Start()
         {
-            yield return _jamKit.Run(ChangeSceneCoroutine("", _currentSceneName));
+            ChangeScene("", _currentSceneName);
         }
 
         private void Update()
@@ -28,22 +28,22 @@ namespace JamKit
             string nextSceneName = _currentScene.Tick();
             if (nextSceneName != _jamKit.SameScene)
             {
-                _jamKit.Run(ChangeSceneCoroutine(_currentSceneName, nextSceneName));
+                ChangeScene(_currentSceneName, nextSceneName);
             }
         }
 
-        private IEnumerator ChangeSceneCoroutine(string oldSceneName, string newSceneName)
+        private void ChangeScene(string oldSceneName, string newSceneName)
         {
             _isSceneLoading = true;
 
             if (oldSceneName != "")
             {
-                yield return _currentScene.Exit();
-                yield return SceneManager.UnloadSceneAsync(oldSceneName);
+                _currentScene.Exit();
+                SceneManager.UnloadSceneAsync(oldSceneName);
             }
 
             _currentSceneName = newSceneName;
-            yield return SceneManager.LoadSceneAsync(newSceneName, new LoadSceneParameters(LoadSceneMode.Additive));
+            SceneManager.LoadScene(newSceneName, new LoadSceneParameters(LoadSceneMode.Additive));
             _currentScene = FindFirstObjectByType<SceneRoot>();
             _currentScene.Init(_jamKit, _camera);
             _isSceneLoading = false;

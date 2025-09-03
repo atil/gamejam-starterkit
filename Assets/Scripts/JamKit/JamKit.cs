@@ -18,6 +18,7 @@ namespace JamKit
         private void Update()
         {
             UpdateSfx();
+            UpdateTweens(Time.deltaTime);
         }
     }
 }
