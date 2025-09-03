@@ -1,18 +1,25 @@
-﻿using JamKit;
+﻿using UnityEngine;
 
 namespace Game
 {
-    public class GameMain : SceneRoot
+    public class GameMain : MonoBehaviour
     {
-        protected override void InitScene()
+        [SerializeField] private Root _root;
+
+        public void Setup()
         {
-            Camera.backgroundColor = JamKit.Globals.GameSceneCameraBackgroundColor;
         }
 
-        public override string Tick()
+        public void ResetGame()
         {
-            return JamKit.SameScene;
         }
 
+        public void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.K))
+            {
+                _root.OnGameDone();
+            }
+        }
     }
 }

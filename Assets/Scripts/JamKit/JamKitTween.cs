@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace JamKit
+namespace Game
 {
     public enum TweenUpdateResult
     {
@@ -56,6 +56,48 @@ namespace JamKit
 
             float t = _curve.Evaluate(Time / Duration);
             _transform.position = Vector3.Lerp(_start, _target, t);
+
+            return TweenUpdateResult.Running;
+        }
+    }
+
+    public class TweenMoveDiscrete : TweenBase
+    {
+        private readonly Transform _transform;
+        private readonly Vector3 _target;
+        private readonly AnimationCurve _curve;
+        private readonly float _interval = 0.2f;
+
+        private Vector3 _start;
+        private int _step = 0;
+
+        public TweenMoveDiscrete(Transform transform, Vector3 target, float duration, float interval, AnimationCurve curve) : base(duration)
+        {
+            _transform = transform;
+            _target = target;
+            _interval = interval;
+            _curve = curve ?? AnimationCurve.EaseInOut(0, 0, 1, 1);
+        }
+
+        public override void Begin()
+        {
+            _start = _transform.position;
+        }
+
+        public override TweenUpdateResult Tick(float dt)
+        {
+            Time += dt;
+            if (Time >= Duration)
+            {
+                return TweenUpdateResult.Finished;
+            }
+
+            if (Time > _interval * _step)
+            {
+                _step++;
+                float t = _curve.Evaluate(Time / Duration);
+                _transform.position = Vector3.Lerp(_start, _target, t);
+            }
 
             return TweenUpdateResult.Running;
         }
