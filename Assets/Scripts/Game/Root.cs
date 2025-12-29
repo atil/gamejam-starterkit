@@ -25,13 +25,16 @@ namespace Game
             _gameMain.Setup();
             _intermission.Setup();
 
-            //_jamKit.Tween(new TweenImageColor(_coverImage, _jamKit.Globals.SceneTransitionParams.Color, _jamKit.Globals.SceneTransitionParams.Duration));
+            if (_quickStart)
+            {
+                InitGame();
+                _jamKit.Tween(new TweenImageColor(_coverImage, Color.clear, 0.3f));
+                return;
+            }
 
             _camera.backgroundColor = _jamKit.Globals.SplashSceneCameraBackgroundColor;
             _jamKit.Tween(new TweenImageColor(_coverImage, Color.clear, _jamKit.Globals.SceneTransitionParams.Duration));
             _splash.gameObject.SetActive(true);
-            
-
         }
 
         public void OnSplashClickedPlay()
@@ -39,16 +42,18 @@ namespace Game
             _jamKit.TweenSeq(new TweenBase[]
             {
                 new TweenImageColor(_coverImage, _jamKit.Globals.SceneTransitionParams.Color, _jamKit.Globals.SceneTransitionParams.Duration),
-                new TweenCallback(() =>
-                {
-                    _camera.backgroundColor = _jamKit.Globals.GameSceneCameraBackgroundColor;
-                    _splash.gameObject.SetActive(false);
-                    _gameMain.gameObject.SetActive(true);
-                    _gameMain.ResetGame();
-                }),
+                new TweenCallback(InitGame),
                 new TweenImageColor(_coverImage, Color.clear, _jamKit.Globals.SceneTransitionParams.Duration)
 
             });
+        }
+
+        private void InitGame()
+        {
+            _camera.backgroundColor = _jamKit.Globals.GameSceneCameraBackgroundColor;
+            _splash.gameObject.SetActive(false);
+            _gameMain.gameObject.SetActive(true);
+            _gameMain.ResetGame();
         }
 
         public void OnGameDone()
