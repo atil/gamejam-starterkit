@@ -3,10 +3,6 @@ using UnityEngine.UI;
 
 namespace Game
 {
-    public class CrossSceneData
-    { 
-    }
-
     public class Root : MonoBehaviour
     {
         [SerializeField] private bool _quickStart = false;
@@ -18,6 +14,8 @@ namespace Game
         [SerializeField] private Splash _splash;
         [SerializeField] private GameMain _gameMain;
         [SerializeField] private Intermission _intermission;
+
+        public Camera Camera => _camera;
 
         private void Start()
         {

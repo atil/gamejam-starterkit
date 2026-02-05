@@ -5,6 +5,7 @@ namespace Game
     public class GameMain : MonoBehaviour
     {
         [SerializeField] private Root _root;
+        [SerializeField] private JamKit _jamKit;
 
         public void Setup()
         {
